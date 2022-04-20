@@ -17,6 +17,7 @@ def get_slice(data_dir, curation_dir):
     wmins = []
     wmaxs = []
     IDs = []
+    paths = []
     for seg in segs:
         ID = seg.split('/')[-1].split('.')[0]
         print(ID)

@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 
 
+
+
 def MRI_Sequences(proj_dir):
 
     curation_dir = os.path.join(proj_dir, 'curation')
@@ -10,8 +12,14 @@ def MRI_Sequences(proj_dir):
 
     df0 = pd.read_csv(os.path.join(curation_dir, 'curation_data.csv'))
     df1 = pd.read_csv(os.path.join(curation_dir, 'pLGG_sum.csv'))
-   
+  
+    # creat MRI sequence name 
     df0['seq'] = df0['seq_id'] + df0['contrast']
+    # replace seq name with correct ones
+    df0['seq'] = df0['seq'].map({'T1W ': 'T1W', 'T2W ': 'T2W', 'FLAIR ': 'FLAIR',
+        'ADC ': 'ADC', 'FA ': 'FA'})
+    print('check seq replace:\n', df0['seq'])
+    
     df = df0[['pat_id', 'scan_type', 'seq', 'path']]
     print(df)
     df2 = df.groupby(['pat_id'], as_index=True)['seq'].apply(list).reset_index()
@@ -39,23 +47,23 @@ def MRI_Sequences(proj_dir):
             b = 1
         else:
             b = 0
-        if 'T1W ' in seq:
+        if 'T1W' in seq:
             c = 1
         else:
             c = 0
-        if 'T2W ' in seq:
+        if 'T2W' in seq:
             d = 1
         else:
             d = 0
-        if 'FLAIR ' in seq:
+        if 'FLAIR' in seq:
             e = 1
         else:
             e = 0
-        if 'ADC ' in seq:
+        if 'ADC' in seq:
             f = 1
         else:
             f = 0
-        if 'FA ' in seq:
+        if 'FA' in seq:
             f = 1
         else:
             f = 0
@@ -72,7 +80,7 @@ def MRI_Sequences(proj_dir):
     
     df = df[['Subject_ID', 'Clinical_Data', 'Genomic_Data', 'MRI_Data',  
              'T1W_Pre', 'T1W_Post', 'T1W', 'T2W', 'FLAIR', 'ADC', 'FA', 'seq', 'path']]
-    #print(df)
+    print(df['seq'])
     df.to_csv(os.path.join(curation_dir, 'master.csv'), index=False)
-
+    df.to_pickle(os.path.join(curation_dir, 'master.pkl'))
 

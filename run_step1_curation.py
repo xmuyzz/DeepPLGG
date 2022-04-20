@@ -7,7 +7,7 @@ from data_curation.MRI_Sequences import MRI_Sequences
 if __name__ == '__main__':
 
     data_dir = '/mnt/aertslab/DATA/Glioma/flywheel_20210210_223349/flywheel/LGG/SUBJECTS'
-    curation_dir = '/mnt/aertslab/USERS/Zezhong/pLGG/curation'
+    proj_dir = '/mnt/aertslab/USERS/Zezhong/pLGG'
     run_MRI_curation = False
     
     if run_MRI_curation:

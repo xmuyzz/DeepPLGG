@@ -45,8 +45,7 @@ def train_model(root_dir, out_dir, log_dir, model_dir, model, run_model, train_g
     model.compile(
         optimizer=optimizer,
         loss=loss_function,
-        metrics=['acc']
-        )
+        metrics=['acc'])
 	
     ## call back functions
     my_callbacks = callbacks(log_dir)
@@ -66,8 +65,7 @@ def train_model(root_dir, out_dir, log_dir, model_dir, model, run_model, train_g
         shuffle=True,
         class_weight=None,
         sample_weight=None,
-        initial_epoch=0
-        )
+        initial_epoch=0)
     
     ## valudation acc and loss
     score = model.evaluate(x_val, y_val)
@@ -96,8 +94,7 @@ def train_model(root_dir, out_dir, log_dir, model_dir, model, run_model, train_g
         saved_model=saved_model,
         epoch=epoch,
         batch_size=batch_size,
-        lr=lr
-        )
+        lr=lr)
 
     
 

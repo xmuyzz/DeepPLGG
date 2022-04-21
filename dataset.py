@@ -6,10 +6,10 @@ import pandas as pd
 import nibabel as nib
 from sklearn.model_selection import KFold, train_test_split
 import resize_3d
+from opts import parse_opts
 
 
-
-def pat_data():
+def pat_data(curation_dir):
 
     # labels
     df = pd.read_csv(os.path.join(curation_dir, 'BRAF_slice.py'))
@@ -142,5 +142,33 @@ def get_img_dataset(pro_data_dir, df_train, df_test, channel):
             channel=channel
             )
 
+
+if __name__ == '__main__':
+
+    opt = parse_opts()
+        if opt.root_dir is not None:
+            opt.HN_out_dir = os.path.join(opt.root_dir, opt.HN_out)
+            opt.HN_data_dir = os.path.join(opt.root_dir, opt.HN_data)
+            opt.HN_label_dir = os.path.join(opt.root_dir, opt.HN_label)
+            opt.HN_pro_data_dir = os.path.join(opt.root_dir, opt.HN_pro_data)
+            opt.HN_pre_data_dir = os.path.join(opt.root_dir, opt.HN_pre_data)
+            if not os.path.exists(opt.HN_out_dir):
+                os.makedirs(opt.HN_out_dir)
+            if not os.path.exists(opt.HN_data_dir):
+                os.makedirs(opts.HN_data_dir)
+            if not os.path.exists(opt.HN_label_dir):
+                os.makedirs(opt.HN_label_dir)
+            if not os.path.exists(opt.HN_pro_data_dir):
+                os.makefirs(opt.HN_pro_data_dir)
+            if not os.path.exists(opt.HN_pre_data_dir):
+                os.makedirs(opt.HN_pre_data_dir)
+
+    df_train, df_test = pat_data(curation_dir=curation_dir)
+
+    get_img_dataset(
+        pro_data_dir=pro_data_dir, 
+        df_train=df_train, 
+        df_test=df_test, 
+        channel=channel)
 
 

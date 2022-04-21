@@ -14,8 +14,8 @@ from models.TLNet import TLNet
 
 
 
-def generate_model(out_dir, run_model, activation, input_shape=(192, 192, 3), 
-              freeze_layer=None, transfer=False):
+def generate_model(out_dir, run_model, activation, input_shape, 
+                   freeze_layer=None, transfer=False):
     
     """
     generate cnn models
@@ -42,38 +42,40 @@ def generate_model(out_dir, run_model, activation, input_shape=(192, 192, 3),
     if run_model == 'cnn':
         my_model = simple_cnn(
             input_shape=input_shape,
-            activation=activation,
-            )
-    elif run_model == 'ResNet101V2':
+            activation=activation)
+    elif run_model == 'ResNet50V2':
         my_model = ResNet(
-            resnet='ResNet101V2',  #'ResNet50V2',
+            resnet='ResNet50V2',
             transfer=transfer,
             freeze_layer=freeze_layer,
             input_shape=input_shape,
-            activation=activation,
-            )
+            activation=activation)
+    elif run_model == 'ResNet101V2':
+        my_model = ResNet(
+            resnet='ResNet101V2',
+            transfer=transfer,
+            freeze_layer=freeze_layer,
+            input_shape=input_shape,
+            activation=activation)
     elif run_model == 'EffNetB4':
         my_model = EfficientNet(
             effnet='EffNetB4',
             transfer=transfer,
             freeze_layer=freeze_layer,
             input_shape=input_shape,
-            activation=activation
-            )
+            activation=activation)
     elif run_model == 'TLNet':
         my_model = TLNet(
             resnet='ResNet101V2',
             input_shape=input_shape,
-            activation=activation
-            )
+            activation=activation)
     elif run_model == 'InceptionV3':
         my_model = Inception(
             inception='InceptionV3',
             transfer=transfer,
             freeze_layer=freeze_layer,
             input_shape=input_shape,
-            activation=activation
-            )
+            activation=activation)
 
     print(my_model)
     
@@ -83,8 +85,7 @@ def generate_model(out_dir, run_model, activation, input_shape=(192, 192, 3),
         model=my_model,
         to_file=fn,
         show_shapes=True,
-        show_layer_names=True
-        )
+        show_layer_names=True)
 
 
     return my_model

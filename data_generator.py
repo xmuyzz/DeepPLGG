@@ -11,7 +11,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 
-def train_generator(pro_data_dir, batch_size, input_channel=3):
+def train_generator(pro_data_dir, batch_size, input_channel):
 
     """
     create data generator for training dataset;
@@ -61,8 +61,7 @@ def train_generator(pro_data_dir, batch_size, input_channel=3):
         preprocessing_function=None,
         data_format=None,
         validation_split=0.0,
-        dtype=None,
-        )
+        dtype=None)
 
    ### Train generator
     train_gen = datagen.flow(
@@ -71,8 +70,7 @@ def train_generator(pro_data_dir, batch_size, input_channel=3):
         subset=None,
         batch_size=batch_size,
         seed=42,
-        shuffle=True,
-        )
+        shuffle=True)
     print('Train generator created')
 
     return train_gen
@@ -126,8 +124,7 @@ def val_generator(pro_data_dir, batch_size, input_channel=3):
         preprocessing_function=None,
         data_format=None,
         validation_split=0.0,
-        dtype=None,
-        )
+        dtype=None)
     
     datagen = ImageDataGenerator()
     val_gen = datagen.flow(
@@ -136,8 +133,8 @@ def val_generator(pro_data_dir, batch_size, input_channel=3):
         subset=None,
         batch_size=batch_size,
         seed=42,
-        shuffle=True,
-        )
+        shuffle=True)
+
     print('val generator created')
 
     return x_val, y_val, val_gen

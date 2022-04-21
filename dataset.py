@@ -9,6 +9,7 @@ import resize_3d
 from opts import parse_opts
 
 
+
 def pat_data(curation_dir):
 
     # labels
@@ -132,36 +133,25 @@ def get_img_dataset(pro_data_dir, df_train, df_test, channel):
     fns_df = ['train_img_df.csv', 'test_img_df.csv']
 
     for df, fn_arr_1ch, fn_arr_3ch, fn_df in zip(dfs, fns_arr_1ch, fns_arr_3ch, fns_df):
-
         img_dataset(
             pro_data_dir=pro_data_dir,
             df=df,
             fn_arr_1ch=fn_arr_1ch,
             fn_arr_3ch=fn_arr_3ch,
             fn_df=fn_df,
-            channel=channel
-            )
+            channel=channel)
 
 
 if __name__ == '__main__':
 
     opt = parse_opts()
         if opt.root_dir is not None:
-            opt.HN_out_dir = os.path.join(opt.root_dir, opt.HN_out)
-            opt.HN_data_dir = os.path.join(opt.root_dir, opt.HN_data)
-            opt.HN_label_dir = os.path.join(opt.root_dir, opt.HN_label)
-            opt.HN_pro_data_dir = os.path.join(opt.root_dir, opt.HN_pro_data)
-            opt.HN_pre_data_dir = os.path.join(opt.root_dir, opt.HN_pre_data)
-            if not os.path.exists(opt.HN_out_dir):
-                os.makedirs(opt.HN_out_dir)
-            if not os.path.exists(opt.HN_data_dir):
-                os.makedirs(opts.HN_data_dir)
-            if not os.path.exists(opt.HN_label_dir):
-                os.makedirs(opt.HN_label_dir)
-            if not os.path.exists(opt.HN_pro_data_dir):
-                os.makefirs(opt.HN_pro_data_dir)
-            if not os.path.exists(opt.HN_pre_data_dir):
-                os.makedirs(opt.HN_pre_data_dir)
+            opt.curation_dir = os.path.join(opt.root_dir, opt.curation)
+            opt.pro_data_dir = os.path.join(opt.root_dir, opt.HN_pro_data)
+            if not os.path.exists(opt.pro_data_dir):
+                os.makedirs(opt.pro_data_dir)
+            if not os.path.exists(opt.curation_dir):
+                os.makedirs(opts.curation_dir)
 
     df_train, df_test = pat_data(curation_dir=curation_dir)
 

@@ -11,7 +11,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 
-def train_generator(pro_data_dir, batch_size, input_channel):
+def train_generator(pro_data_dir, batch_size, channel):
 
     """
     create data generator for training dataset;
@@ -27,9 +27,9 @@ def train_generator(pro_data_dir, batch_size, input_channel):
     """
     
     ### load train data based on input channels
-    if input_channel == 1:
+    if channel == 1:
         fn = 'train_arr_1ch.npy'
-    elif input_channel == 3:
+    elif channel == 3:
         #fn = 'train_arr_3ch_crop.npy'
         fn = 'train_arr_3ch.npy'
     x_train = np.load(os.path.join(pro_data_dir, fn))
@@ -76,7 +76,7 @@ def train_generator(pro_data_dir, batch_size, input_channel):
     return train_gen
 
 
-def val_generator(pro_data_dir, batch_size, input_channel=3):
+def val_generator(pro_data_dir, batch_size, channel):
 
     """
     create data generator for validation dataset;
@@ -92,9 +92,9 @@ def val_generator(pro_data_dir, batch_size, input_channel=3):
     """
     
     ### load val data based on input channels
-    if input_channel == 1:
+    if channel == 1:
         fn = 'val_arr_1ch.npy'
-    elif input_channel == 3:
+    elif channel == 3:
         fn = 'val_arr_3ch.npy'
     x_val = np.load(os.path.join(pro_data_dir, fn))
 

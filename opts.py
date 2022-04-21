@@ -5,9 +5,7 @@ def parse_opts():
     parser = argparse.ArgumentParser()
     
     # path
-    parser.add_argument('--root_dir', default='/mnt/aertslab/USERS/Zezhong/contrast_detection/GitHub_Test', 
-                        type=str, help='Root path')
-    # head and neck dataset 
+    parser.add_argument('--root_dir', default='/mnt/aertslab/USERS/Zezhong/pLGG', type=str, help='Root path')
     parser.add_argument('--HN_data', default='HeadNeck/raw_image', type=str, help='Raw image path')
     parser.add_argument('--HN_pre_data', default='HeadNeck/pre_image', type=str, help='Preprocessed image path')
     parser.add_argument('--HN_label', default='HeadNeck/label', type=str, help='Label path')
@@ -18,17 +16,6 @@ def parse_opts():
     parser.add_argument('--HN_train', default='HeadNeck/out/train', type=str, help='Train results path')
     parser.add_argument('--HN_val', default='HeadNeck/out/val', type=str, help='Validation results path')
     parser.add_argument('--HN_test', default='HeadNeck/out/test', type=str, help='Test results path')
-    # chest dataset
-    parser.add_argument('--CH_data', default='Chest/raw_image', type=str, help='Raw image path')
-    parser.add_argument('--CH_pre_data', default='Chest/pre_image', type=str, help='Preprocessed image path')
-    parser.add_argument('--CH_label', default='Chest/label', type=str, help='Label path')
-    parser.add_argument('--CH_out', default='Chest/out', type=str, help='Results output path')
-    parser.add_argument('--CH_pro_data', default='Chest/pro_data', type=str, help='Processed data path')
-    parser.add_argument('--CH_model', default='Chest/out/model', type=str, help='Results output path')
-    parser.add_argument('--CH_log', default='Chest/out/log', type=str, help='Log data path')
-    parser.add_argument('--CH_train', default='Chest/out/train', type=str, help='Train results path')
-    parser.add_argument('--CH_val', default='Chest/out/val', type=str, help='Validation results path')
-    parser.add_argument('--CH_test', default='Chest/out/test', type=str, help='Test results path')
 
     # data preprocessing
     parser.add_argument('--preprocess_data', action='store_true', help='If true, test is performed.')

@@ -2,19 +2,12 @@ import os
 import numpy as np
 import pandas as pd
 import seaborn as sn
-import matplotlib
-import matplotlib.pyplot as plt
 import glob
 from time import gmtime, strftime
 from datetime import datetime
 import timeit
 import argparse
-import pydot
-import pydotplus
-import graphviz
 import random
-import tensorflow as tf
-from tensorflow.keras.utils import plot_model
 from data_generator import train_generator
 from data_generator import test_generator
 from generate_model import generate_model
@@ -24,9 +17,7 @@ from opts import parse_opts
 
 
 
-if __name__ == '__main__':
-
-    opt = parse_opts()
+def main(opt):
 
     random.seed(opt.manual_seed)
     np.random.seed(opt.manual_seed)
@@ -45,6 +36,8 @@ if __name__ == '__main__':
             os.makefirs(opt.pro_data_dir)
         if not os.path.exists(opt.log_dir):
             os.makedirs(opt.log_dir)
+    else:
+        print('get correct root dir to start.')
 
     # data generator for train and val data
     train_gen = train_generator(
@@ -86,6 +79,13 @@ if __name__ == '__main__':
             saved_model=opt.saved_model, 
             threshold=opt.img_threshold, 
             activation=opt.activation)
+
+
+if __name__ == '__main__':
+
+    opt = parse_opts()
+
+    main(opt)
 
 
 

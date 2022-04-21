@@ -5,7 +5,7 @@ import pickle
 import pandas as pd
 import nibabel as nib
 from sklearn.model_selection import KFold, train_test_split
-import resize_3d
+from datasets.resize_3d import resize_3d
 from opts import parse_opts
 
 
@@ -13,7 +13,7 @@ from opts import parse_opts
 def pat_data(curation_dir):
 
     # labels
-    df = pd.read_csv(os.path.join(curation_dir, 'BRAF_slice.py'))
+    df = pd.read_csv(os.path.join(curation_dir, 'BRAF_slice.csv'))
     df = df[~df['BRAF-Status'].isin(['data in review'])]
     labels = []
     img_dirs = []
@@ -67,13 +67,14 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel=1):
     slice_numbers = []
     list_fn = []
     arr = np.empty([0, 192, 192])
-
-    for img_dir, pat_id, wmin, wmax in zip(df['img_dir'], df['Subjec_ID'], df['wmin'], df['wmax']):
+    print(df)
+    for img_dir, pat_id, wmin, wmax in zip(df['img_dir'], df['Subject_ID'], df['wmin'], df['wmax']):
         count += 1
+        print(count)
         img = resize_3d(
             img_dir=img_dir, 
-            interp_type=interp_type,
-            output_size=output_size
+            interp_type='nearest_neighbor',
+            resize_shape=(192, 192)
             )
         slice_range = [wmin, wmax]
         data = img[slice_range, :, :]
@@ -85,7 +86,7 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel=1):
         slice_numbers.append(data.shape[0])
         for i in range(data.shape[0]):
             img = data[i, :, :]
-            fn = patient_id + '_' + 'slice%s'%(f'{i:03d}')
+            fn = pat_id + '_' + 'slice%s'%(f'{i:03d}')
             list_fn.append(fn)
 
     ### covert 1 channel input to 3 channel inputs for CNN
@@ -102,7 +103,7 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel=1):
     # generate labels for CT slices
     list_label = []
     list_img = []
-    for label, slice_number in zip(labels, slice_numbers):
+    for label, slice_number in zip(df['label'], slice_numbers):
         list_1 = [label] * slice_number
         list_label.extend(list_1)
     ### makeing dataframe containing img dir and labels
@@ -133,7 +134,7 @@ def get_img_dataset(pro_data_dir, df_train, df_test, channel):
     fns_df = ['train_img_df.csv', 'test_img_df.csv']
 
     for df, fn_arr_1ch, fn_arr_3ch, fn_df in zip(dfs, fns_arr_1ch, fns_arr_3ch, fns_df):
-        img_dataset(
+        img_data(
             pro_data_dir=pro_data_dir,
             df=df,
             fn_arr_1ch=fn_arr_1ch,
@@ -145,20 +146,22 @@ def get_img_dataset(pro_data_dir, df_train, df_test, channel):
 if __name__ == '__main__':
 
     opt = parse_opts()
-        if opt.root_dir is not None:
-            opt.curation_dir = os.path.join(opt.root_dir, opt.curation)
-            opt.pro_data_dir = os.path.join(opt.root_dir, opt.HN_pro_data)
-            if not os.path.exists(opt.pro_data_dir):
-                os.makedirs(opt.pro_data_dir)
-            if not os.path.exists(opt.curation_dir):
-                os.makedirs(opts.curation_dir)
+    if opt.root_dir is not None:
+        opt.curation_dir = os.path.join(opt.root_dir, opt.curation)
+        opt.pro_data_dir = os.path.join(opt.root_dir, opt.pro_data)
+        if not os.path.exists(opt.pro_data_dir):
+            os.makedirs(opt.pro_data_dir)
+        if not os.path.exists(opt.curation_dir):
+            os.makedirs(opts.curation_dir)
+    else:
+        print('provide root dir to start!')
 
-    df_train, df_test = pat_data(curation_dir=curation_dir)
+    df_train, df_test = pat_data(curation_dir=opt.curation_dir)
 
     get_img_dataset(
-        pro_data_dir=pro_data_dir, 
+        pro_data_dir=opt.pro_data_dir, 
         df_train=df_train, 
         df_test=df_test, 
-        channel=channel)
+        channel=opt.channel)
 
 

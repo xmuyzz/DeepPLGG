@@ -58,21 +58,21 @@ def EfficientNet(effnet, transfer, freeze_layer, input_shape, activation):
         include_top = False
 
     ### determine ResNet base model
-    if effnet == 'EffNetB3':
+    if effnet == 'EfficientNetB3':
         base_model = EfficientNetB3(
             weights=weights,
             include_top=include_top,
             input_shape=input_shape,
             pooling=None
             )
-    elif effnet == 'EffNetB4':
+    elif effnet == 'EfficientNetB4':
         base_model = EfficientNetB4(
             weights=weights,
             include_top=include_top,
             input_shape=input_shape,
             pooling=None
             )
-    elif effnet == 'EffNetB5':
+    elif effnet == 'EffcientNetB5':
         base_model = EfficientNetB5(
             weights=weights,
             include_top=include_top,

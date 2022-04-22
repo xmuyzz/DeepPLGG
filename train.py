@@ -7,15 +7,17 @@ from datetime import datetime
 from time import localtime, strftime
 import tensorflow as tf
 from tensorflow.keras.models import Model
-from callbacks import callbacks
+from callback import callback
 from utils.plot_train_curve import plot_train_curve
 from tensorflow.keras.optimizers import Adam
 from statistics.write_txt import write_txt
+from tensorflow.keras.callbacks import (
+    EarlyStopping, LearningRateScheduler, ModelCheckpoint, TensorBoard)
 
 
 
-def train(root_dir, out_dir, log_dir, model_dir, model, run_model, train_gen, 
-          batch_size, epoch, loss_function, lr): 
+def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen, 
+          val_gen, x_val, y_val, batch_size, epoch, loss_function, lr): 
 
     """
     train model
@@ -47,7 +49,7 @@ def train(root_dir, out_dir, log_dir, model_dir, model, run_model, train_gen,
 	
     ## call back functions
     check_point = tf.keras.callbacks.ModelCheckpoint(
-        filepath=os.path.join(log_dir, 'model.{epoch:02d}-{val_auc:.2f}.h5'),,
+        filepath=os.path.join(log_dir, 'model.{epoch:02d}-{val_auc:.2f}.h5'),
         monitor='val_auc',  
         save_best_only=True,
         save_weights_only=True,
@@ -76,13 +78,13 @@ def train(root_dir, out_dir, log_dir, model_dir, model, run_model, train_gen,
         train_gen,
         steps_per_epoch=train_gen.n//batch_size,
         epochs=epoch,
-        #validation_data=val_gen,
+        validation_data=val_gen,
         #validation_data=(x_val, y_val),
-        #validation_steps=val_gen.n//batch_size,
+        validation_steps=val_gen.n//batch_size,
         #validation_steps=y_val.shape[0]//batch_size,
         verbose=2,
         callbacks=my_callbacks,
-        validation_split=0.2,
+        validation_split=None,
         shuffle=True,
         class_weight=None,
         sample_weight=None,
@@ -96,7 +98,7 @@ def train(root_dir, out_dir, log_dir, model_dir, model, run_model, train_gen,
     print('val acc:', acc)
 
     ## save final model
-    saved_model = str(run_model)
+    saved_model = str(cnn_model)
     model.save(os.path.join(model_dir, saved_model))
     print(saved_model)
     
@@ -111,7 +113,7 @@ def train(root_dir, out_dir, log_dir, model_dir, model, run_model, train_gen,
         reports=None,
         prc_aucs=None,
         roc_stats=None,
-        run_model=run_model,
+        run_model=cnn_model,
         saved_model=saved_model,
         epoch=epoch,
         batch_size=batch_size,

@@ -8,11 +8,11 @@ from datetime import datetime
 import timeit
 import argparse
 import random
+import tensorflow as tf
 from data_generator import train_generator
-from data_generator import test_generator
+from data_generator import val_generator
 from generate_model import generate_model
 from train import train
-from callbacks import callbacks
 from opts import parse_opts
 
 
@@ -42,10 +42,13 @@ def main(opt):
     # data generator for train and val data
     train_gen = train_generator(
         pro_data_dir=opt.pro_data_dir,
-        batch_size=opt.batch_size)
-    x_test, y_test, test_gen = test_generator(
+        batch_size=opt.batch_size,
+        channel=opt.channel)
+
+    x_val, y_val, val_gen = val_generator(
         pro_data_dir=opt.pro_data_dir,
-        batch_size=opt.batch_size)
+        batch_size=opt.batch_size,
+        channel=opt.channel)
 
     # get CNN model 
     my_model = generate_model(
@@ -56,18 +59,20 @@ def main(opt):
 
     ## train model
     if opt.train:
+        cnn_model = 'simple_cnn'
         train(
             root_dir=opt.root_dir,
             out_dir=opt.out_dir,
-            log_dir=opt.og_dir,
+            log_dir=opt.log_dir,
             model_dir=opt.model_dir,
             model=my_model,
-            cnn_model=opt.cnn_model,
+            cnn_model=cnn_model,
             train_gen=train_gen,
             val_gen=val_gen,
+            x_val=x_val,
+            y_val=y_val,
             batch_size=opt.batch_size,
             epoch=opt.epoch,
-            optimizer=optimizer,
             loss_function=opt.loss_function,
             lr=opt.lr)
     # test model

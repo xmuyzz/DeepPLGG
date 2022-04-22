@@ -14,13 +14,13 @@ def parse_opts():
 
     # data preprocessing
     parser.add_argument('--manual_seed', default=1234, type=int, help='seed')
-    parser.add_argument('--channel', default=3, type=int, help='Input channel (3 | 1)')
+    parser.add_argument('--channel', default=1, type=int, help='Input channel (3 | 1)')
     
     # train model
     parser.add_argument('--run_type', default=None, type=str, help='train|val|test')
     parser.add_argument('--batch_size', default=32, type=int, help='Batch size')
     parser.add_argument('--lr', default=1e-5, type=float, help='learning rate')
-    parser.add_argument('--epoch', default=1, type=int, help='Epoch')
+    parser.add_argument('--epoch', default=100, type=int, help='Epoch')
     parser.add_argument('--activation', default='sigmoid', type=str, help='Activation function on last layer')
     parser.add_argument('--loss_function',  default='binary_crossentropy', type=str, help='loss function')
     parser.add_argument('--cnn_model', default='EfficientNetB4', type=str, help='cnn model')
@@ -41,7 +41,7 @@ def parse_opts():
     parser.add_argument('--train', action='store_true', help='If true, training is performed.')
     parser.set_defaults(train=True)
     parser.add_argument('--test', action='store_true', help='If true, validation is performed.')
-    parser.set_defaults(test=True)
+    parser.set_defaults(test=False)
     parser.add_argument('--fine_tune', action='store_true', help='If true, fine_tune is performed.')
     parser.set_defaults(fine_tune=True)
     parser.add_argument('--stats_plots', action='store_true', help='If true, plots and statistics is performed.')

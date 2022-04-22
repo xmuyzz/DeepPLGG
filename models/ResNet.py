@@ -47,9 +47,9 @@ def ResNet(resnet, transfer, freeze_layer, input_shape, activation):
     ### determine input shape
     default_shape = (224, 224, 3)
     if input_shape == default_shape:
-	include_top = True
+        include_top = True
     else:
-	include_top = False
+        include_top = False
     
     ## determine n_output
     if activation == 'softmax':

@@ -14,14 +14,16 @@ def pat_data(curation_dir):
 
     # labels
     df = pd.read_csv(os.path.join(curation_dir, 'BRAF_slice.csv'))
-    df = df[~df['BRAF-Status'].isin(['data in review'])]
+    df = df[~df['BRAF-Status'].isin(['In Review'])]
     labels = []
     img_dirs = []
-    for braf in zip(df['BRAF-Status']):
+    for braf in df['BRAF-Status']:
         if braf == 'No BRAF mutation':
             label = 0
+            #print(braf)
         else:
             label = 1
+            #print(braf)
         labels.append(label)
     df['label'] = labels
 
@@ -31,18 +33,19 @@ def pat_data(curation_dir):
         test_size=0.2, 
         random_state=0, 
         stratify=df[['label']])
-#    data = df['img_dir']
-#    label = df['label']
-#    ID = df['Subject_ID']
-#    img_train, img_test, label_train, label_test, ID_train, ID_test = train_test_split(
-#        data,
-#        label,
-#        ID,
-#        stratify=label,
-#        test_size=0.3,
-#        random_state=42)
+    df_train, df_val = train_test_split(
+        df_train,
+        test_size=0.1,
+        random_state=1234,
+        stratify=df_train[['label']])
+    print(df_train.shape)
+    print(df_val.shape)
+    print(df_test.shape)
+    print('train:', df_train['label'].value_counts())
+    print('val:', df_val['label'].value_counts())
+    print('test:', df_test['label'].value_counts())
     
-    return df_train, df_test
+    return df_train, df_val, df_test
 
 
 def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel=1):
@@ -115,7 +118,7 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel=1):
     #print('data size:', img_df.shape[0])
 
 
-def get_img_dataset(pro_data_dir, df_train, df_test, channel):
+def get_img_dataset(pro_data_dir, df_train, df_val, df_test, channel):
 
     """
     Get np arrays for stacked images slices, labels and IDs for train, val, test dataset;
@@ -129,9 +132,9 @@ def get_img_dataset(pro_data_dir, df_train, df_test, channel):
     """
     
     dfs = [df_train, df_test]
-    fns_arr_1ch = ['train_arr_1ch.npy', 'test_arr_1ch.npy']
-    fns_arr_3ch = ['train_arr_3ch.npy', 'test_arr_3ch.npy']
-    fns_df = ['train_img_df.csv', 'test_img_df.csv']
+    fns_arr_1ch = ['train_arr_1ch.npy', 'val_arr_1ch.npy', 'test_arr_1ch.npy']
+    fns_arr_3ch = ['train_arr_3ch.npy', 'val_arr_3ch.npy', 'test_arr_3ch.npy']
+    fns_df = ['train_img_df.csv', 'val_img_df.csv', 'test_img_df.csv']
 
     for df, fn_arr_1ch, fn_arr_3ch, fn_df in zip(dfs, fns_arr_1ch, fns_arr_3ch, fns_df):
         img_data(
@@ -156,11 +159,12 @@ if __name__ == '__main__':
     else:
         print('provide root dir to start!')
 
-    df_train, df_test = pat_data(curation_dir=opt.curation_dir)
+    df_train, df_val, df_test = pat_data(curation_dir=opt.curation_dir)
 
     get_img_dataset(
         pro_data_dir=opt.pro_data_dir, 
-        df_train=df_train, 
+        df_train=df_train,
+        df_val=df_val,
         df_test=df_test, 
         channel=opt.channel)
 

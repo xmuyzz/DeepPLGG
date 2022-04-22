@@ -36,7 +36,7 @@ def train_generator(pro_data_dir, batch_size, channel):
 
     ### load val labels
     train_df = pd.read_csv(os.path.join(pro_data_dir, 'train_img_df.csv'))
-    y_train  = np.asarray(train_df['label']).astype('int').reshape((-1, 1))
+    y_train = np.asarray(train_df['label']).astype('int').reshape((-1, 1))
 
     ## data generator
     datagen = ImageDataGenerator(
@@ -87,7 +87,7 @@ def val_generator(pro_data_dir, batch_size, channel):
         input_channel {int} -- input channel for image;
 
     Return:
-        Keras data generator;
+    Keras data generator;
 
     """
     
@@ -134,8 +134,8 @@ def val_generator(pro_data_dir, batch_size, channel):
         batch_size=batch_size,
         seed=42,
         shuffle=True)
+    print('test generator created')
 
-    print('val generator created')
 
     return x_val, y_val, val_gen
 

@@ -1,8 +1,5 @@
 import os
 import numpy as np
-import pydot
-import pydotplus
-import graphviz
 from tensorflow.keras.utils import plot_model
 from models.simple_cnn import simple_cnn
 from models.EfficientNet import EfficientNet
@@ -33,7 +30,6 @@ def generate_model(out_dir, cnn_model, activation, input_shape, freeze_layer=Non
     
     """
     
-
     if cnn_model == 'cnn':
         my_model = simple_cnn(
             input_shape=input_shape,
@@ -71,15 +67,6 @@ def generate_model(out_dir, cnn_model, activation, input_shape, freeze_layer=Non
             freeze_layer=freeze_layer,
             input_shape=input_shape,
             activation=activation)
-
-    # plot cnn architectures and save png   
-    if plot_model:
-        fn = os.path.join(out_dir, str(run_model) + '.png')
-        plot_model(
-            model=my_model,
-            to_file=fn,
-            show_shapes=True,
-            show_layer_names=True)
 
     return my_model
 

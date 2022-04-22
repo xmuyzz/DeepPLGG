@@ -15,7 +15,7 @@ def scheduler(epoch, lr):
   else:
     return lr * tf.math.exp(-0.1)
 
-def callbacks(log_dir):
+def callback(log_dir):
   
     check_point = ModelCheckpoint(
         filepath=os.path.join(log_dir, 'model.{epoch:02d}-{val_loss:.2f}.h5'),

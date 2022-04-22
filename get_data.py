@@ -48,7 +48,7 @@ def pat_data(curation_dir):
     return df_train, df_val, df_test
 
 
-def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel=1):
+def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel):
 
     """
     get stacked image slices from scan level CT and corresponding labels and IDs;
@@ -79,8 +79,9 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel=1):
             interp_type='nearest_neighbor',
             resize_shape=(192, 192)
             )
-        slice_range = [wmin, wmax]
+        slice_range = range(wmin, wmax+1)
         data = img[slice_range, :, :]
+        print('data shape:', data.shape)
         ### normalize signlas to [0, 1]
         data = np.interp(data, (data.min(), data.max()), (0, 1))
         ## stack all image arrays to one array for CNN input
@@ -91,7 +92,7 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel=1):
             img = data[i, :, :]
             fn = pat_id + '_' + 'slice%s'%(f'{i:03d}')
             list_fn.append(fn)
-
+    print('slice numbers:', slice_numbers)
     ### covert 1 channel input to 3 channel inputs for CNN
     if channel == 1:
         img_arr = arr.reshape(arr.shape[0], arr.shape[1], arr.shape[2], 1)
@@ -115,8 +116,8 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel=1):
     pd.set_option('display.max_rows', 500)
     #print(img_df[0:100])
     img_df.to_csv(os.path.join(pro_data_dir, fn_df))
-    #print('data size:', img_df.shape[0])
-
+    print('data size:', img_df)
+    print(img_df['label'].value_counts())
 
 def get_img_dataset(pro_data_dir, df_train, df_val, df_test, channel):
 
@@ -131,7 +132,7 @@ def get_img_dataset(pro_data_dir, df_train, df_val, df_test, channel):
         slice_range {np.array} -- image slice range in z direction for cropping;
     """
     
-    dfs = [df_train, df_test]
+    dfs = [df_train, df_val, df_test]
     fns_arr_1ch = ['train_arr_1ch.npy', 'val_arr_1ch.npy', 'test_arr_1ch.npy']
     fns_arr_3ch = ['train_arr_3ch.npy', 'val_arr_3ch.npy', 'test_arr_3ch.npy']
     fns_df = ['train_img_df.csv', 'val_img_df.csv', 'test_img_df.csv']

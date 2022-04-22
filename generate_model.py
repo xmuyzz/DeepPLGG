@@ -30,7 +30,7 @@ def generate_model(out_dir, cnn_model, activation, input_shape, freeze_layer=Non
     
     """
     
-    if cnn_model == 'cnn':
+    if cnn_model == 'simple_cnn':
         my_model = simple_cnn(
             input_shape=input_shape,
             activation=activation)

@@ -59,14 +59,13 @@ def main(opt):
 
     ## train model
     if opt.train:
-        cnn_model = 'simple_cnn'
         train(
             root_dir=opt.root_dir,
             out_dir=opt.out_dir,
             log_dir=opt.log_dir,
             model_dir=opt.model_dir,
             model=my_model,
-            cnn_model=cnn_model,
+            cnn_model=opt.cnn_model,
             train_gen=train_gen,
             val_gen=val_gen,
             x_val=x_val,

@@ -55,9 +55,9 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
         save_weights_only=True,
         mode='max')  # determine better models according to "max" AUC.
     early_stopping = EarlyStopping(
-        monitor='val_loss',
+        monitor='val_auc',
         min_delta=0,
-        patience=20,
+        patience=100,
         verbose=0,
         mode='auto',
         baseline=None,
@@ -103,21 +103,23 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
     print(saved_model)
     
     ## save validation results to txt file 
-    write_txt(
-        run_type='train',
-        root_dir=root_dir,
-        loss=1,
-        acc=1,
-        cms=None,
-        cm_norms=None,
-        reports=None,
-        prc_aucs=None,
-        roc_stats=None,
-        run_model=cnn_model,
-        saved_model=saved_model,
-        epoch=epoch,
-        batch_size=batch_size,
-        lr=lr)
+    _write_txt = False
+    if _write_txt:
+        write_txt(
+            run_type='train',
+            root_dir=root_dir,
+            loss=1,
+            acc=1,
+            cms=None,
+            cm_norms=None,
+            reports=None,
+            prc_aucs=None,
+            roc_stats=None,
+            run_model=cnn_model,
+            saved_model=saved_model,
+            epoch=epoch,
+            batch_size=batch_size,
+            lr=lr)
 
     
 

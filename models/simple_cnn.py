@@ -32,7 +32,7 @@ from tensorflow.keras.losses import BinaryCrossentropy
 
 
 
-def simple_cnn(input_shape, lr, activation, loss_fn, opt):
+def simple_cnn(input_shape, activation):
 
     """
     simple CNN model
@@ -82,12 +82,6 @@ def simple_cnn(input_shape, lr, activation, loss_fn, opt):
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(0.3))
     model.add(Dense(n_output, activation=activation))
-
-    model.compile(
-                  loss=loss_fn,
-                  optimizer=opt,
-                  metrics=['accuracy']
-                  )
 
     model.summary()
 

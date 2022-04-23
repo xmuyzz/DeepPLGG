@@ -5,13 +5,12 @@ import numpy as np
 import pandas as pd
 import seaborn as sn
 import matplotlib.pyplot as plt
-import nrrd
 import scipy.stats as ss
 import SimpleITK as stik
 import glob
 from PIL import Image
 from collections import Counter
-import skimage.transform as st
+#import skimage.transform as st
 from datetime import datetime
 from time import gmtime, strftime
 import pickle
@@ -19,7 +18,7 @@ import tensorflow
 from tensorflow.keras.models import Model
 from tensorflow.keras.models import load_model
 from sklearn.metrics import classification_report
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, roc_auc_score
 
 
 
@@ -48,15 +47,11 @@ def test(run_type, model_dir, pro_data_dir, saved_model, threshold=0.5, activati
     # load data and label based on run type
     #--------------------------------------- 
     if run_type == 'val':
-        fn_data = 'val_arr_3ch.npy'
+        fn_data = 'val_arr_1ch.npy'
         fn_label = 'val_img_df.csv'
         fn_pred = 'val_img_pred.csv'
     elif run_type == 'test':
-        fn_data = 'test_arr_3ch.npy'
-        fn_label = 'test_img_df.csv'
-        fn_pred = 'test_img_pred.csv'
-    elif run_type == 'tune':
-        fn_data = 'test_arr.npy'
+        fn_data = 'test_arr_1ch.npy'
         fn_label = 'test_img_df.csv'
         fn_pred = 'test_img_pred.csv'
     
@@ -73,6 +68,9 @@ def test(run_type, model_dir, pro_data_dir, saved_model, threshold=0.5, activati
     acc = np.around(score[1], 3)
     print('loss:', loss)
     print('acc:', acc)
+    auc = roc_auc_score(y_label, y_pred)
+    auc = np.around(auc, 3)
+    print('auc:', auc)
     
     if activation == 'sigmoid':
         y_pred = model.predict(x_data)

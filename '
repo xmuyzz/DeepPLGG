@@ -41,24 +41,23 @@ def main(opt):
         print('get correct root dir to start.')
 
     # data generator for train and val data
-    if opt.load_data:
-        train_gen = train_generator(
-            pro_data_dir=opt.pro_data_dir,
-            batch_size=opt.batch_size,
-            channel=opt.channel)
+    train_gen = train_generator(
+        pro_data_dir=opt.pro_data_dir,
+        batch_size=opt.batch_size,
+        channel=opt.channel)
 
-        x_val, y_val, val_gen = val_generator(
-            pro_data_dir=opt.pro_data_dir,
-            batch_size=opt.batch_size,
-            channel=opt.channel)
+    x_val, y_val, val_gen = val_generator(
+        pro_data_dir=opt.pro_data_dir,
+        batch_size=opt.batch_size,
+        channel=opt.channel)
 
-        # get CNN model 
-        my_model = generate_model(
-            cnn_model=opt.cnn_model,
-            weights=opt.weights,
-            freeze_layer=opt.freeze_layer,
-            input_shape=opt.input_shape,
-            activation=opt.activation)
+    # get CNN model 
+    my_model = generate_model(
+        cnn_model=opt.cnn_model,
+        weights=opt.weights,
+        freeze_layer=opt.freeze_layer,
+        input_shape=opt.input_shape,
+        activation=opt.activation)
 
     ## train model
     if opt.train:
@@ -84,7 +83,7 @@ def main(opt):
             model_dir=opt.model_dir, 
             pro_data_dir=opt.pro_data_dir, 
             saved_model=opt.saved_model, 
-            threshold=opt.thr_img, 
+            threshold=opt.img_threshold, 
             activation=opt.activation)
 
 

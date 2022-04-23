@@ -17,7 +17,7 @@ def parse_opts():
     parser.add_argument('--channel', default=1, type=int, help='Input channel (3 | 1)')
     
     # train model
-    parser.add_argument('--run_type', default=None, type=str, help='train|val|test')
+    parser.add_argument('--run_type', default='test', type=str, help='train|val|test')
     parser.add_argument('--weights', default=None, type=str, help='None|image_net')
     parser.add_argument('--batch_size', default=32, type=int, help='Batch size')
     parser.add_argument('--lr', default=1e-5, type=float, help='learning rate')
@@ -33,16 +33,18 @@ def parse_opts():
     parser.add_argument('--thr_prob', default=0.5, type=float, help='threshold to decide class on patient level')
     parser.add_argument('--thr_pos', default=0.5, type=float, help='threshold to decide class on patient level')
     parser.add_argument('--n_bootstrap', default=1000, type=int, help='n times of bootstrap to calcualte 95% CI')
-    parser.add_argument('--saved_model', default='EffNetB4', type=str, help='saved model name')    
+    parser.add_argument('--saved_model', default='simple_cnn', type=str, help='saved model name')    
 
     # fine tune model
     parser.add_argument('--tuned_model', default='Tuned_EffNetB4', type=str, help='tuned model')    
     
     # actions
+    parser.add_argument('--load_data', action='store_true', help='If true, load data is performed.')
+    parser.set_defaults(train=False)
     parser.add_argument('--train', action='store_true', help='If true, training is performed.')
-    parser.set_defaults(train=True)
+    parser.set_defaults(train=False)
     parser.add_argument('--test', action='store_true', help='If true, validation is performed.')
-    parser.set_defaults(test=False)
+    parser.set_defaults(test=True)
     parser.add_argument('--fine_tune', action='store_true', help='If true, fine_tune is performed.')
     parser.set_defaults(fine_tune=True)
     parser.add_argument('--stats_plots', action='store_true', help='If true, plots and statistics is performed.')

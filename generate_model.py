@@ -27,7 +27,7 @@ def generate_model(cnn_model, weights, freeze_layer, input_shape, activation):
       activation   - required : activation function in last layer
     
     """
-   
+       
     if cnn_model == 'simple_cnn':
         model = simple_cnn(input_shape=input_shape, activation=activation)
     else:

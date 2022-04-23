@@ -1,15 +1,3 @@
-"""
-  ----------------------------------------------
-  DeepContrast - run DeepContrast pipeline step2
-  ----------------------------------------------
-  ----------------------------------------------
-  Author: AIM Harvard
-  
-  Python Version: 3.8.5
-  ----------------------------------------------
-  
-"""
-
 import os
 import numpy as np
 import pandas as pd
@@ -56,17 +44,17 @@ def simple_cnn(input_shape, activation):
     model.add(Conv2D(16, kernel_size=(3, 3), activation='relu', input_shape=input_shape))
     model.add(BatchNormalization(momentum=0.95))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.3))
+    #model.add(Dropout(0.3))
 
     model.add(BatchNormalization(momentum=0.95))
     model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.3))
+    #model.add(Dropout(0.3))
     
     model.add(BatchNormalization(momentum=0.95))
     model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.3))
+    #model.add(Dropout(0.3))
 
     model.add(BatchNormalization(momentum=0.95))
     model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))

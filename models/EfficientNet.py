@@ -1,26 +1,12 @@
 import os
-import numpy as np
-import pandas as pd
-import seaborn as s1n
-import matplotlib.pyplot as plt
-import glob
 import tensorflow
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import img_to_array, load_img, ImageDataGenerator
 from tensorflow.keras.layers import GlobalAveragePooling2D
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.losses import BinaryCrossentropy
-from tensorflow.keras.metrics import BinaryAccuracy
-from tensorflow.keras.applications import EfficientNetB5
-from tensorflow.keras.applications import EfficientNetB4
-from tensorflow.keras.applications import EfficientNetB3
-from tensorflow.keras.applications import DenseNet121
-from tensorflow.keras.applications import Xception
-from tensorflow.keras.applications import InceptionV3
-from tensorflow.keras.applications import InceptionResNetV2
-
+from tensorflow.keras.applications import (
+    EfficientNetB0, EfficientNetB1, EfficientNetB2, EfficientNetB3, EfficientNetB4,
+    EfficientNetB5, EfficientNetB6, EfficientNetB7)
 
 
 def EfficientNet(effnet, transfer, freeze_layer, input_shape, activation):
@@ -29,7 +15,7 @@ def EfficientNet(effnet, transfer, freeze_layer, input_shape, activation):
     """
     EfficientNet
 
-    @params:
+    Args:
       effnet       - required : name of resnets with different layers, i.e. 'ResNet101'.
       transfer     - required : decide if want do transfer learning
       model_dir    - required : folder path to save model
@@ -38,13 +24,7 @@ def EfficientNet(effnet, transfer, freeze_layer, input_shape, activation):
     
     """
 
-    ### Keras CNN models for use: https://keras.io/api/applications/
-    ### InceptionV3(top1 acc 0.779)
-    ### InceptionResnetV2(top1 acc 0.803),
-    ### ResNet152V2(top1 acc 0.780)
-    ### EficientNetB4
-
- ### determine if use transfer learnong or not
+    # determine if use transfer learnong or not
     if transfer == True:
         weights = 'imagenet'
     elif transfer == False:
@@ -58,27 +38,30 @@ def EfficientNet(effnet, transfer, freeze_layer, input_shape, activation):
         include_top = False
 
     ### determine ResNet base model
+    if effnet == 'EfficientNetB0':
+        base_model = EfficientNetB0(weights=weights, include_top=include_top,
+            input_shape=input_shape, pooling=None)
+    elif effnet == 'EfficientNetB1':
+        base_model = EfficientNetB1(weights=weights, include_top=include_top,
+            input_shape=input_shape, pooling=None)
+    elif effnet == 'EffcientNetB2':
+        base_model = EfficientNetB2(weights=weights, include_top=include_top,
+            input_shape=input_shape, pooling=None)
     if effnet == 'EfficientNetB3':
-        base_model = EfficientNetB3(
-            weights=weights,
-            include_top=include_top,
-            input_shape=input_shape,
-            pooling=None
-            )
+        base_model = EfficientNetB3(weights=weights, include_top=include_top,
+            input_shape=input_shape, pooling=None)
     elif effnet == 'EfficientNetB4':
-        base_model = EfficientNetB4(
-            weights=weights,
-            include_top=include_top,
-            input_shape=input_shape,
-            pooling=None
-            )
+        base_model = EfficientNetB4(weights=weights, include_top=include_top,
+            input_shape=input_shape, pooling=None)
     elif effnet == 'EffcientNetB5':
-        base_model = EfficientNetB5(
-            weights=weights,
-            include_top=include_top,
-            input_shape=input_shape,
-            pooling=None
-            )
+        base_model = EfficientNetB5(weights=weights, include_top=include_top,
+            input_shape=input_shape, pooling=None)
+    elif effnet == 'EfficientNetB6':
+        base_model = EfficientNetB6(weights=weights, include_top=include_top,
+            input_shape=input_shape, pooling=None)
+    elif effnet == 'EffcientNetB7':
+        base_model = EfficientNetB7(weights=weights, include_top=include_top,
+            input_shape=input_shape, pooling=None)
     base_model.trainable = True
 
  ### create top model

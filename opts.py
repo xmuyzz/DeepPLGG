@@ -18,12 +18,13 @@ def parse_opts():
     
     # train model
     parser.add_argument('--run_type', default=None, type=str, help='train|val|test')
+    parser.add_argument('--weights', default=None, type=str, help='None|image_net')
     parser.add_argument('--batch_size', default=32, type=int, help='Batch size')
     parser.add_argument('--lr', default=1e-5, type=float, help='learning rate')
     parser.add_argument('--epoch', default=100, type=int, help='Epoch')
     parser.add_argument('--activation', default='sigmoid', type=str, help='Activation function on last layer')
     parser.add_argument('--loss_function',  default='binary_crossentropy', type=str, help='loss function')
-    parser.add_argument('--cnn_model', default='simple_cnn', type=str, help='cnn model')
+    parser.add_argument('--cnn_model', default='ResNet101V2', type=str, help='cnn model')
     parser.add_argument('--input_shape', default=(192, 192, 1), type=int, help='Input shape')
     parser.add_argument('--freeze_layer', default=None, type=str, help='Freeze layer to train')
 

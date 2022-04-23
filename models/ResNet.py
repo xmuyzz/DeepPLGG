@@ -1,9 +1,5 @@
 import os
 import numpy as np
-import pandas as pd
-import seaborn as sn
-import matplotlib.pyplot as plt
-import glob
 import tensorflow
 from tensorflow import keras
 from tensorflow.keras.models import Model
@@ -59,26 +55,23 @@ def ResNet(resnet, transfer, freeze_layer, input_shape, activation):
 
     ### determine ResNet base model
     if resnet == 'ResNet50V2':
-        base_model = ResNet50V2(
-            weights=None,
-            include_top=include_top,
-            input_shape=input_shape,
-            pooling=None      
-            )                
+        base_model = ResNet50V2(weights=None, include_top=include_top,
+            input_shape=input_shape, pooling=None)                
     elif resnet == 'ResNet101V2':
-        base_model = ResNet101V2(
-            weights=None,
-            include_top=include_top,
-            input_shape=input_shape,
-            pooling=None       
-            )                
+        base_model = ResNet101V2(weights=None, include_top=include_top,
+            input_shape=input_shape, pooling=None)                
     elif resnet == 'ResNet152V2': 
-        base_model = ResNet152V2(
-            weights=None,
-            include_top=include_top,
-            input_shape=input_shape,
-            pooling=None       
-            )               
+        base_model = ResNet152V2(weights=None, include_top=include_top,
+            input_shape=input_shape, pooling=None)               
+    if resnet == 'ResNet50':
+        base_model = ResNet50(weights=None, include_top=include_top,
+            input_shape=input_shape, pooling=None)
+    elif resnet == 'ResNet101':
+        base_model = ResNet101(weights=None, include_top=include_top,
+            input_shape=input_shape, pooling=None)       
+    elif resnet == 'ResNet152':
+        base_model = ResNet152(weights=None, include_top=include_top,
+            input_shape=input_shape, pooling=None)
 
     ### create top model
     inputs = base_model.input

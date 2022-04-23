@@ -52,10 +52,11 @@ def main(opt):
 
     # get CNN model 
     my_model = generate_model(
-        out_dir=opt.out_dir,
-        cnn_model=opt.cnn_model, 
-        activation=opt.activation, 
-        input_shape=opt.input_shape)
+        cnn_model=opt.cnn_model,
+        weights=opt.weights,
+        freeze_layer=opt.freeze_layer,
+        input_shape=opt.input_shape,
+        activation=opt.activation)
 
     ## train model
     if opt.train:

@@ -42,10 +42,9 @@ def get_stats_plots(pro_data_dir, root_dir, run_type, run_model, loss, acc,
     
     """
     
-    train_dir = os.path.join(root_dir, 'HeadNeck/output/train')
-    val_dir = os.path.join(root_dir, 'HeadNeck/output/val')
-    test_dir = os.path.join(root_dir, 'HeadNeck/output/test')
-    tune_dir = os.path.join(root_dir, 'Chest/output/tune')
+    train_dir = os.path.join(root_dir, 'output/train')
+    val_dir = os.path.join(root_dir, 'output/val')
+    test_dir = os.path.join(root_dir, 'output/test')
 
     if not os.path.exists(train_dir):
         os.makedirs(train_dir)
@@ -53,8 +52,6 @@ def get_stats_plots(pro_data_dir, root_dir, run_type, run_model, loss, acc,
         os.makedirs(val_dir)
     if not os.path.exists(test_dir):
         os.makedirs(test_dir)
-    if not os.path.exists(tune_dir):
-        os.makedirs(tune_dir)
 
     ### determine if this is train or test
     if run_type == 'val':
@@ -63,9 +60,6 @@ def get_stats_plots(pro_data_dir, root_dir, run_type, run_model, loss, acc,
     elif run_type == 'test':
         fn_df_pred = 'test_img_pred.csv'
         save_dir = test_dir
-    elif run_type == 'tune':
-        fn_df_pred = 'test_img_pred.csv'
-        save_dir = tune_dir
 
     cms = []
     cm_norms = []

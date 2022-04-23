@@ -2,15 +2,11 @@ import os
 import numpy as np
 import pandas as pd
 import pickle
-from utils.mean_CI import mean_CI
-from utils.plot_roc import plot_roc
-from utils.roc_bootstrap import roc_bootstrap
-from utils.plot_prc import plot_prc
+from statistics.plot_roc import plot_roc
+from statistics.roc_bootstrap import roc_bootstrap
+from statistics.plot_prc import plot_prc
 
 
-# ----------------------------------------------------------------------------------
-# plot ROI
-# ----------------------------------------------------------------------------------
 
 def prc_all(run_type, level, thr_prob, thr_pos, color, pro_data_dir, save_dir, fn_df_pred):
 

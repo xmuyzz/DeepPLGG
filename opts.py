@@ -24,16 +24,16 @@ def parse_opts():
     parser.add_argument('--epoch', default=100, type=int, help='Epoch')
     parser.add_argument('--activation', default='sigmoid', type=str, help='Activation function on last layer')
     parser.add_argument('--loss_function',  default='binary_crossentropy', type=str, help='loss function')
-    parser.add_argument('--cnn_model', default='ResNet101V2', type=str, help='cnn model')
+    parser.add_argument('--cnn_model', default='simple_cnn', type=str, help='cnn model')
     parser.add_argument('--input_shape', default=(192, 192, 1), type=int, help='Input shape')
     parser.add_argument('--freeze_layer', default=None, type=str, help='Freeze layer to train')
 
     # test model   
-    parser.add_argument('--thr_img', default=0.5, type=float, help='threshold to decide class on image level')
-    parser.add_argument('--thr_prob', default=0.5, type=float, help='threshold to decide class on patient level')
+    parser.add_argument('--thr_img', default=0.696, type=float, help='threshold to decide class on image level')
+    parser.add_argument('--thr_prob', default=0.756, type=float, help='threshold to decide class on patient level')
     parser.add_argument('--thr_pos', default=0.5, type=float, help='threshold to decide class on patient level')
     parser.add_argument('--n_bootstrap', default=1000, type=int, help='n times of bootstrap to calcualte 95% CI')
-    parser.add_argument('--saved_model', default='simple_cnn', type=str, help='saved model name')    
+    parser.add_argument('--saved_model', default='model.24-0.85.h5', type=str, help='saved model name')    
 
     # fine tune model
     parser.add_argument('--tuned_model', default='Tuned_EffNetB4', type=str, help='tuned model')    

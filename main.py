@@ -18,6 +18,7 @@ from opts import parse_opts
 from statistics.get_stats_plots import get_stats_plots
 
 
+
 def main(opt):
 
     random.seed(opt.manual_seed)
@@ -52,13 +53,15 @@ def main(opt):
             batch_size=opt.batch_size,
             channel=opt.channel)
 
-        # get CNN model 
-        my_model = generate_model(
-            cnn_model=opt.cnn_model,
-            weights=opt.weights,
-            freeze_layer=opt.freeze_layer,
-            input_shape=opt.input_shape,
-            activation=opt.activation)
+    # get CNN model 
+    my_model = generate_model(
+        cnn_model=opt.cnn_model,
+        weights=opt.weights,
+        freeze_layer=opt.freeze_layer,
+        input_shape=opt.input_shape,
+        activation=opt.activation,
+        loss_function=opt.loss_function,
+        lr=opt.lr)
 
     ## train model
     if opt.train:
@@ -75,12 +78,12 @@ def main(opt):
             y_val=y_val,
             batch_size=opt.batch_size,
             epoch=opt.epoch,
-            loss_function=opt.loss_function,
             lr=opt.lr)
     
     # test model
     if opt.test:
         loss, acc = test(
+            model=my_model,
             run_type=opt.run_type, 
             model_dir=opt.model_dir, 
             pro_data_dir=opt.pro_data_dir, 
@@ -88,23 +91,23 @@ def main(opt):
             threshold=opt.thr_img, 
             activation=opt.activation)
         
-        # get stats and plots
-        if opt.stats_plots:
-            get_stats_plots(
-                pro_data_dir=opt.pro_data_dir,
-                root_dir=opt.root_dir,
-                run_type=opt.run_type,
-                run_model=opt.cnn_model,
-                loss=loss,
-                acc=acc,
-                saved_model=opt.cnn_model,
-                epoch=opt.epoch,
-                batch_size=opt.batch_size,
-                lr=opt.lr,
-                thr_img=opt.thr_img,
-                thr_prob=opt.thr_prob,
-                thr_pos=opt.thr_pos,
-                bootstrap=opt.n_bootstrap)
+    # get stats and plots
+    if opt.stats_plots:
+        get_stats_plots(
+            pro_data_dir=opt.pro_data_dir,
+            root_dir=opt.root_dir,
+            run_type=opt.run_type,
+            run_model=opt.cnn_model,
+            loss=None,
+            acc=None,
+            saved_model=opt.cnn_model,
+            epoch=opt.epoch,
+            batch_size=opt.batch_size,
+            lr=opt.lr,
+            thr_img=opt.thr_img,
+            thr_prob=opt.thr_prob,
+            thr_pos=opt.thr_pos,
+            bootstrap=opt.n_bootstrap)
 
 
 if __name__ == '__main__':

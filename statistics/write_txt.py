@@ -29,10 +29,9 @@ def write_txt(run_type, root_dir, loss, acc, cms, cm_norms, reports, prc_aucs,
     
     """
 
-    train_dir = os.path.join(root_dir, 'HeadNeck/out/train')
-    val_dir = os.path.join(root_dir, 'HeadNeck/outval')
-    test_dir = os.path.join(root_dir, 'HeadNeck/out/test')
-    tune_dir = os.path.join(root_dir, 'Chest/out/tune')
+    train_dir = os.path.join(root_dir, 'output/train')
+    val_dir = os.path.join(root_dir, 'output/val')
+    test_dir = os.path.join(root_dir, 'output/test')
 
     if not os.path.exists(train_dir):
         os.makedirs(train_dir)
@@ -40,8 +39,6 @@ def write_txt(run_type, root_dir, loss, acc, cms, cm_norms, reports, prc_aucs,
         os.makedirs(val_dir)
     if not os.path.exists(test_dir):
         os.makedirs(test_dir)
-    if not os.path.exists(tune_dir):
-        os.makedirs(tune_dir)
 
     if run_type == 'train':
         log_fn = 'train_logs.text'

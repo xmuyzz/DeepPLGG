@@ -1,5 +1,5 @@
 import os
-import tensorflow
+import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import img_to_array, load_img, ImageDataGenerator
 from tensorflow.keras.layers import GlobalAveragePooling2D
@@ -13,7 +13,7 @@ from models.simple_cnn import simple_cnn
 
 
 
-def generate_model(cnn_model, weights, freeze_layer, input_shape, activation):
+def generate_model(cnn_model, weights, freeze_layer, input_shape, activation, loss_function, lr):
 
 
     """
@@ -150,6 +150,12 @@ def generate_model(cnn_model, weights, freeze_layer, input_shape, activation):
                 layer.trainable = True
         model.summary()
 
+    # model compile
+    auc = tf.keras.metrics.AUC()
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(lr=lr),
+        loss=loss_function,
+        metrics=[auc])
 
     return model
 

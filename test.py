@@ -22,7 +22,8 @@ from sklearn.metrics import confusion_matrix, roc_auc_score
 
 
 
-def test(run_type, model_dir, pro_data_dir, saved_model, threshold=0.5, activation='sigmoid'):    
+def test(model, run_type, model_dir, pro_data_dir, saved_model, 
+         threshold=0.5, activation='sigmoid'):    
     
     """
     Evaluate model for validation/test/external validation data;
@@ -60,7 +61,8 @@ def test(run_type, model_dir, pro_data_dir, saved_model, threshold=0.5, activati
 
     ## load saved model and evaluate
     #-------------------------------
-    model = load_model(os.path.join(model_dir, saved_model))
+    #model = load_model(os.path.join(model_dir, saved_model))
+    model.load_weights(os.path.join(model_dir, saved_model))
     y_pred = model.predict(x_data)
     score = model.evaluate(x_data, y_label)
     loss = np.around(score[0], 3)

@@ -17,7 +17,7 @@ from tensorflow.keras.callbacks import (
 
 
 def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen, 
-          val_gen, x_val, y_val, batch_size, epoch, loss_function, lr): 
+          val_gen, x_val, y_val, batch_size, epoch, lr): 
 
     """
     train model
@@ -41,15 +41,9 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
     
     """
 
-    auc = tf.keras.metrics.AUC()
-    model.compile(
-        optimizer=tf.keras.optimizers.Adam(lr=lr),
-        loss=loss_function,
-        metrics=[auc])
-	
     ## call back functions
     check_point = tf.keras.callbacks.ModelCheckpoint(
-        filepath=os.path.join(log_dir, 'model.{epoch:02d}-{val_auc:.2f}.h5'),
+        filepath=os.path.join(model_dir, 'model.{epoch:02d}-{val_auc:.2f}.h5'),
         monitor='val_auc',  
         save_best_only=True,
         save_weights_only=True,

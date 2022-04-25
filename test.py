@@ -2,13 +2,7 @@ import os
 import timeit
 import numpy as np
 import pandas as pd
-import seaborn as sn
-import matplotlib.pyplot as plt
-import scipy.stats as ss
-import SimpleITK as stik
 import glob
-from PIL import Image
-from collections import Counter
 #import skimage.transform as st
 from datetime import datetime
 from time import gmtime, strftime

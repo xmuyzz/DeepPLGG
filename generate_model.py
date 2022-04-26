@@ -150,12 +150,12 @@ def generate_model(cnn_model, weights, freeze_layer, input_shape, activation, lo
                 layer.trainable = True
         model.summary()
 
-    # model compile
-    auc = tf.keras.metrics.AUC()
-    model.compile(
-        optimizer=tf.keras.optimizers.Adam(lr=lr),
-        loss=loss_function,
-        metrics=[auc])
+#    # model compile
+#    auc = tf.keras.metrics.AUC()
+#    model.compile(
+#        optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+#        loss=loss_function,
+#        metrics=[auc])
 
     return model
 

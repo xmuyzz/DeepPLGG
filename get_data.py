@@ -48,7 +48,7 @@ def pat_data(curation_dir):
     return df_train, df_val, df_test
 
 
-def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel):
+def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel, save_nii, nii_dir):
 
     """
     get stacked image slices from scan level CT and corresponding labels and IDs;
@@ -77,13 +77,16 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel):
         img = resize_3d(
             img_dir=img_dir, 
             interp_type='nearest_neighbor',
-            resize_shape=(192, 192)
-            )
+            resize_shape=(192, 192))
         slice_range = range(wmin, wmax+1)
         data = img[slice_range, :, :]
         print('data shape:', data.shape)
         ### normalize signlas to [0, 1]
         data = np.interp(data, (data.min(), data.max()), (0, 1))
+        if save_nii:
+            nii = nib.Nifti1Image(data, affine=np.eye(4))
+            fn = str(pat_id) + '.nii.gz'
+            nib.save(nii, os.path.join(nii_dir, fn))
         ## stack all image arrays to one array for CNN input
         arr = np.concatenate([arr, data], 0)
         ### create patient ID and slice index for img
@@ -101,6 +104,7 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel):
     elif channel == 3:
         img_arr = np.broadcast_to(arr, (3, arr.shape[0], arr.shape[1], arr.shape[2]))
         img_arr = np.transpose(img_arr, (1, 2, 3, 0))
+        #img_arr = np.transpose(img_arr, (1, 0, 2, 3))
         print('img_arr shape:', img_arr.shape)
         np.save(os.path.join(pro_data_dir, fn_arr_3ch), img_arr)
     
@@ -119,7 +123,8 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel):
     print('data size:', img_df)
     print(img_df['label'].value_counts())
 
-def get_img_dataset(pro_data_dir, df_train, df_val, df_test, channel):
+
+def get_img_dataset(pro_data_dir, df_train, df_val, df_test, channel, save_nii, nii_dir):
 
     """
     Get np arrays for stacked images slices, labels and IDs for train, val, test dataset;
@@ -144,7 +149,9 @@ def get_img_dataset(pro_data_dir, df_train, df_val, df_test, channel):
             fn_arr_1ch=fn_arr_1ch,
             fn_arr_3ch=fn_arr_3ch,
             fn_df=fn_df,
-            channel=channel)
+            channel=channel,
+            save_nii=save_nii,
+            nii_dir=nii_dir)
 
 
 if __name__ == '__main__':
@@ -153,10 +160,13 @@ if __name__ == '__main__':
     if opt.root_dir is not None:
         opt.curation_dir = os.path.join(opt.root_dir, opt.curation)
         opt.pro_data_dir = os.path.join(opt.root_dir, opt.pro_data)
+        opt.nii_dir = os.path.join(opt.root_dir, opt.nii)
         if not os.path.exists(opt.pro_data_dir):
             os.makedirs(opt.pro_data_dir)
         if not os.path.exists(opt.curation_dir):
-            os.makedirs(opts.curation_dir)
+            os.makedirs(opt.curation_dir)
+        if not os.path.exists(opt.nii_dir):
+            os.makedirs(opt.nii_dir)
     else:
         print('provide root dir to start!')
 
@@ -167,6 +177,8 @@ if __name__ == '__main__':
         df_train=df_train,
         df_val=df_val,
         df_test=df_test, 
-        channel=opt.channel)
+        channel=opt.channel,
+        save_nii=opt.save_nii,
+        nii_dir=opt.nii_dir)
 
 

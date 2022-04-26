@@ -78,19 +78,25 @@ def main(opt):
             y_val=y_val,
             batch_size=opt.batch_size,
             epoch=opt.epoch,
+            loss_function=opt.loss_function,
             lr=opt.lr)
-    
+        print('training complete!')
+
     # test model
     if opt.test:
         loss, acc = test(
             model=my_model,
             run_type=opt.run_type, 
+            channel=opt.channel,
             model_dir=opt.model_dir, 
             pro_data_dir=opt.pro_data_dir, 
-            saved_model=opt.saved_model, 
+            saved_model=opt.saved_model,
+            lr=opt.lr,
+            loss_function=opt.loss_function,
             threshold=opt.thr_img, 
             activation=opt.activation)
-        
+        print('testing complete!')
+
     # get stats and plots
     if opt.stats_plots:
         get_stats_plots(

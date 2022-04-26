@@ -7,7 +7,7 @@ import glob
 from datetime import datetime
 from time import gmtime, strftime
 import pickle
-import tensorflow
+import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.models import load_model
 from sklearn.metrics import classification_report
@@ -16,7 +16,7 @@ from sklearn.metrics import confusion_matrix, roc_auc_score
 
 
 
-def test(model, run_type, model_dir, pro_data_dir, saved_model, 
+def test(model, run_type, channel, model_dir, pro_data_dir, saved_model, lr, loss_function,
          threshold=0.5, activation='sigmoid'):    
     
     """
@@ -41,14 +41,19 @@ def test(model, run_type, model_dir, pro_data_dir, saved_model,
     # load data and label based on run type
     #--------------------------------------- 
     if run_type == 'val':
-        fn_data = 'val_arr_1ch.npy'
+        if channel == 1:
+            fn_data = 'val_arr_1ch.npy'
+        elif channel == 3:
+            fn_data = 'val_arr_3ch.npy'
         fn_label = 'val_img_df.csv'
         fn_pred = 'val_img_pred.csv'
     elif run_type == 'test':
-        fn_data = 'test_arr_1ch.npy'
+        if channel == 1:
+            fn_data = 'test_arr_3ch.npy'
+        elif channel == 3:
+            fn_data = 'test_arr_3ch.npy'
         fn_label = 'test_img_df.csv'
-        fn_pred = 'test_img_pred.csv'
-    
+        fn_pred = 'test_img_pred.csv' 
     x_data = np.load(os.path.join(pro_data_dir, fn_data))
     df = pd.read_csv(os.path.join(pro_data_dir, fn_label))
     y_label = np.asarray(df['label']).astype('int').reshape((-1, 1))
@@ -56,6 +61,12 @@ def test(model, run_type, model_dir, pro_data_dir, saved_model,
     ## load saved model and evaluate
     #-------------------------------
     #model = load_model(os.path.join(model_dir, saved_model))
+    # model compile
+    auc = tf.keras.metrics.AUC()
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+        loss=loss_function,
+        metrics=[auc])
     model.load_weights(os.path.join(model_dir, saved_model))
     y_pred = model.predict(x_data)
     score = model.evaluate(x_data, y_label)
@@ -75,8 +86,8 @@ def test(model, run_type, model_dir, pro_data_dir, saved_model,
         y_pred = y_pred_prob[:, 1]
         y_pred_class = np.argmax(y_pred_prob, axis=1)
 
-    # save a dataframe for prediction
-    #----------------------------------
+    # save a dataframe
+    #-----------------
     ID = []
     for file in df['fn']:
         if run_type in ['val', 'test', 'tune']:

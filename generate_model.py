@@ -76,7 +76,7 @@ def generate_model(cnn_model, weights, freeze_layer, input_shape, activation, lo
         elif cnn_model == 'EfficientNetB1':
             base_model = EfficientNetB1(weights=weights, include_top=include_top,
                 input_shape=input_shape, pooling=None)
-        elif cnn_model == 'EffcientNetB2':
+        elif cnn_model == 'EfficientNetB2':
             base_model = EfficientNetB2(weights=weights, include_top=include_top,
                 input_shape=input_shape, pooling=None)
         if cnn_model == 'EfficientNetB3':

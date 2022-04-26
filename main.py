@@ -53,34 +53,37 @@ def main(opt):
             batch_size=opt.batch_size,
             channel=opt.channel)
 
-    # get CNN model 
-    my_model = generate_model(
-        cnn_model=opt.cnn_model,
-        weights=opt.weights,
-        freeze_layer=opt.freeze_layer,
-        input_shape=opt.input_shape,
-        activation=opt.activation,
-        loss_function=opt.loss_function,
-        lr=opt.lr)
-
-    ## train model
-    if opt.train:
-        train(
-            root_dir=opt.root_dir,
-            out_dir=opt.out_dir,
-            log_dir=opt.log_dir,
-            model_dir=opt.model_dir,
-            model=my_model,
+    # get CNN model
+    cnns = ['ResNet101V2', 'EfficientNetB4', 'MobileNetV2', 'DenseNet121', 
+            'IncepttionV3', 'VGG16']
+    for cnn_model in cnns:
+        my_model = generate_model(
             cnn_model=opt.cnn_model,
-            train_gen=train_gen,
-            val_gen=val_gen,
-            x_val=x_val,
-            y_val=y_val,
-            batch_size=opt.batch_size,
-            epoch=opt.epoch,
+            weights=opt.weights,
+            freeze_layer=opt.freeze_layer,
+            input_shape=opt.input_shape,
+            activation=opt.activation,
             loss_function=opt.loss_function,
             lr=opt.lr)
-        print('training complete!')
+
+        ## train model
+        if opt.train:
+            train(
+                root_dir=opt.root_dir,
+                out_dir=opt.out_dir,
+                log_dir=opt.log_dir,
+                model_dir=opt.model_dir,
+                model=my_model,
+                cnn_model=opt.cnn_model,
+                train_gen=train_gen,
+                val_gen=val_gen,
+                x_val=x_val,
+                y_val=y_val,
+                batch_size=opt.batch_size,
+                epoch=opt.epoch,
+                loss_function=opt.loss_function,
+                lr=opt.lr)
+            print('training complete!')
 
     # test model
     if opt.test:

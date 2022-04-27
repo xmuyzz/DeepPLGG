@@ -78,7 +78,11 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel, save_nii,
             img_dir=img_dir, 
             interp_type='nearest_neighbor',
             resize_shape=(192, 192))
-        slice_range = range(wmin, wmax+1)
+        # trim 2 slices on top and bottom to get rid of small lesions
+        if wmax - wmin <= 4:
+            slice_range = range(wmin, wmax+1)
+        else:
+            slice_range = range(wmin+2, wmax-1)
         data = img[slice_range, :, :]
         print('data shape:', data.shape)
         ### normalize signlas to [0, 1]

@@ -20,14 +20,12 @@ def generate_model(cnn_model, weights, freeze_layer, input_shape, activation, lo
     EfficientNet
 
     Args:
-      cnn_model {str} -- name of resnets with different layers, i.e. 'ResNet101'.
-      weights {str} -- model weights from imagenet
-      input_shape {tuple} -- folder path to save model
-      freeze_layer {int} -- number of layers to freeze
-      activation {str} -- activation function in last layer
+      effnet       - required : name of resnets with different layers, i.e. 'ResNet101'.
+      transfer     - required : decide if want do transfer learning
+      model_dir    - required : folder path to save model
+      freeze_layer - required : number of layers to freeze
+      activation   - required : activation function in last layer
     
-    Returns:
-        cnn model
     """
        
     if cnn_model == 'simple_cnn':

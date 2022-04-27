@@ -54,8 +54,9 @@ def main(opt):
             channel=opt.channel)
 
     # get CNN model
-    cnns = ['ResNet101V2', 'EfficientNetB4', 'MobileNetV2', 'DenseNet121', 
-            'IncepttionV3', 'VGG16']
+    #cnns = ['simple_cnn', 'ResNet101V2', 'EfficientNetB4', 'MobileNetV2', 
+    #        'DenseNet121', 'IncepttionV3', 'VGG16']
+    cnns = ['ResNet101V2']
     for cnn_model in cnns:
         my_model = generate_model(
             cnn_model=opt.cnn_model,
@@ -74,7 +75,7 @@ def main(opt):
                 log_dir=opt.log_dir,
                 model_dir=opt.model_dir,
                 model=my_model,
-                cnn_model=opt.cnn_model,
+                cnn_model=cnn_model,
                 train_gen=train_gen,
                 val_gen=val_gen,
                 x_val=x_val,

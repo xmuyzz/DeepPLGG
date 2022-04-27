@@ -33,8 +33,8 @@ def parse_opts():
     parser.add_argument('--thr_img', default=0.696, type=float, help='threshold to decide class on image level')
     parser.add_argument('--thr_prob', default=0.756, type=float, help='threshold to decide class on patient level')
     parser.add_argument('--thr_pos', default=0.5, type=float, help='threshold to decide class on patient level')
-    parser.add_argument('--n_bootstrap', default=1000, type=int, help='n times of bootstrap to calcualte 95% CI')
-    parser.add_argument('--saved_model', default='02-0.80.h5', type=str, help='saved model name')    
+    parser.add_argument('--n_bootstrap', default=50, type=int, help='n times of bootstrap to calcualte 95% CI')
+    parser.add_argument('--saved_model', default='89-0.94.h5', type=str, help='saved model name')    
 
     # fine tune model
     parser.add_argument('--tuned_model', default='Tuned_EffNetB4', type=str, help='tuned model')    

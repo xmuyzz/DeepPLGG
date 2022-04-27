@@ -88,7 +88,7 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
         callbacks=my_callbacks,
         validation_split=None,
         shuffle=True,
-        class_weight=None,
+        class_weight={0: 3, 1: 1},
         sample_weight=None,
         initial_epoch=0)
     

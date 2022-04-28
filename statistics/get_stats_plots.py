@@ -14,8 +14,8 @@ from statistics.write_txt import write_txt
 
 
 def get_stats_plots(pro_data_dir, root_dir, run_type, run_model, loss, acc, 
-                    saved_model, epoch, batch_size, lr, thr_img=0.5, 
-                    thr_prob=0.5, thr_pos=0.5, bootstrap=1000):
+                    saved_model, epoch, batch_size, lr, thr_img, 
+                    thr_prob, thr_pos, bootstrap):
 
     """
     generate model val/test statistics and plot curves;

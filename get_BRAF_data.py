@@ -10,21 +10,29 @@ from opts import parse_opts
 
 
 
-def pat_data(curation_dir):
+def pat_data(task, curation_dir):
 
     # labels
     df = pd.read_csv(os.path.join(curation_dir, 'BRAF_slice.csv'))
     df = df[~df['BRAF-Status'].isin(['In Review'])]
     labels = []
     img_dirs = []
-    for braf in df['BRAF-Status']:
-        if braf == 'No BRAF mutation':
-            label = 0
-            #print(braf)
-        else:
-            label = 1
-            #print(braf)
-        labels.append(label)
+    if task == 'BRAF_status':
+        for braf in df['BRAF-Status']:
+            if braf == 'No BRAF mutation':
+                label = 0
+                #print(braf)
+            else:
+                label = 1
+                #print(braf)
+            labels.append(label)
+    elif task == 'BRAF_fusion':
+        for braf in df['BRAF-Status']:
+            if braf in ['No BRAF mutation', 'V600E', 'p.V600E', 'LGG, BRAF V600E']:
+                label = 0
+            else:
+                label = 1
+            labels.append(label)
     df['label'] = labels
 
     # train test split
@@ -128,7 +136,7 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel, save_nii,
     print(img_df['label'].value_counts())
 
 
-def get_img_dataset(pro_data_dir, df_train, df_val, df_test, channel, save_nii, nii_dir):
+def get_img_dataset(task, pro_data_dir, df_train, df_val, df_test, channel, save_nii, nii_dir):
 
     """
     Get np arrays for stacked images slices, labels and IDs for train, val, test dataset;
@@ -142,9 +150,14 @@ def get_img_dataset(pro_data_dir, df_train, df_val, df_test, channel, save_nii, 
     """
     
     dfs = [df_train, df_val, df_test]
-    fns_arr_1ch = ['train_arr_1ch.npy', 'val_arr_1ch.npy', 'test_arr_1ch.npy']
-    fns_arr_3ch = ['train_arr_3ch.npy', 'val_arr_3ch.npy', 'test_arr_3ch.npy']
-    fns_df = ['train_img_df.csv', 'val_img_df.csv', 'test_img_df.csv']
+    if task == 'BRAF_status':
+        fns_arr_1ch = ['train_arr_1ch.npy', 'val_arr_1ch.npy', 'test_arr_1ch.npy']
+        fns_arr_3ch = ['train_arr_3ch.npy', 'val_arr_3ch.npy', 'test_arr_3ch.npy']
+        fns_df = ['train_img_df.csv', 'val_img_df.csv', 'test_img_df.csv']
+    elif task == 'BRAF_fusion':
+        fns_arr_1ch = ['train_arr_1ch_.npy', 'val_arr_1ch_.npy', 'test_arr_1ch_.npy']
+        fns_arr_3ch = ['train_arr_3ch_.npy', 'val_arr_3ch_.npy', 'test_arr_3ch_.npy']
+        fns_df = ['train_img_df_.csv', 'val_img_df_.csv', 'test_img_df_.csv']
 
     for df, fn_arr_1ch, fn_arr_3ch, fn_df in zip(dfs, fns_arr_1ch, fns_arr_3ch, fns_df):
         img_data(
@@ -174,9 +187,12 @@ if __name__ == '__main__':
     else:
         print('provide root dir to start!')
 
-    df_train, df_val, df_test = pat_data(curation_dir=opt.curation_dir)
+    df_train, df_val, df_test = pat_data(
+        BRAF=opt.BRAF,
+        curation_dir=opt.curation_dir)
 
     get_img_dataset(
+        BRAF=opt.BRAF,
         pro_data_dir=opt.pro_data_dir, 
         df_train=df_train,
         df_val=df_val,

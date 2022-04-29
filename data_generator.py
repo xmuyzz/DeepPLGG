@@ -11,7 +11,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 
-def train_generator(pro_data_dir, batch_size, channel):
+def train_generator(task, pro_data_dir, batch_size, channel):
 
     """
     create data generator for training dataset;
@@ -27,16 +27,30 @@ def train_generator(pro_data_dir, batch_size, channel):
     """
     
     ### load train data based on input channels
-    if channel == 1:
-        fn = 'train_arr_1ch.npy'
-    elif channel == 3:
-        #fn = 'train_arr_3ch_crop.npy'
-        fn = 'train_arr_3ch.npy'
-    x_train = np.load(os.path.join(pro_data_dir, fn))
-
-    ### load val labels
-    train_df = pd.read_csv(os.path.join(pro_data_dir, 'train_img_df.csv'))
-    y_train = np.asarray(train_df['label']).astype('int').reshape((-1, 1))
+    if task == 'BRAF_status':
+        if channel == 1:
+            fn = 'train_arr_1ch.npy'
+        elif channel == 3:
+            fn = 'train_arr_3ch.npy'
+        x_train = np.load(os.path.join(pro_data_dir, fn))
+        train_df = pd.read_csv(os.path.join(pro_data_dir, 'train_img_df.csv'))
+        y_train = np.asarray(train_df['label']).astype('int').reshape((-1, 1))
+    if task == 'BRAF_fusion':
+        if channel == 1:
+            fn = 'train_arr_1ch_.npy'
+        elif channel == 3:
+            fn = 'train_arr_3ch_.npy'
+        x_train = np.load(os.path.join(pro_data_dir, fn))
+        train_df = pd.read_csv(os.path.join(pro_data_dir, 'train_img_df_.csv'))
+        y_train = np.asarray(train_df['label']).astype('int').reshape((-1, 1))
+    elif task == 'tumor':
+        if channel == 1:
+            fn = '_train_arr_1ch.npy'
+        elif channel == 3:
+            fn = '_train_arr_3ch.npy'
+        x_train = np.load(os.path.join(pro_data_dir, fn))
+        train_df = pd.read_csv(os.path.join(pro_data_dir, '_train_img_df.csv'))
+        y_train = np.asarray(train_df['label']).astype('int').reshape((-1, 1))
 
     ## data generator
     datagen = ImageDataGenerator(
@@ -76,7 +90,7 @@ def train_generator(pro_data_dir, batch_size, channel):
     return train_gen
 
 
-def val_generator(pro_data_dir, batch_size, channel):
+def val_generator(task, pro_data_dir, batch_size, channel):
 
     """
     create data generator for validation dataset;
@@ -92,15 +106,30 @@ def val_generator(pro_data_dir, batch_size, channel):
     """
     
     ### load val data based on input channels
-    if channel == 1:
-        fn = 'val_arr_1ch.npy'
-    elif channel == 3:
-        fn = 'val_arr_3ch.npy'
-    x_val = np.load(os.path.join(pro_data_dir, fn))
-
-    ### load val labels
-    val_df = pd.read_csv(os.path.join(pro_data_dir, 'val_img_df.csv'))
-    y_val = np.asarray(val_df['label']).astype('int').reshape((-1, 1))
+    if task == 'BRAF_status':
+        if channel == 1:
+            fn = 'val_arr_1ch.npy'
+        elif channel == 3:
+            fn = 'val_arr_3ch.npy'
+        x_val = np.load(os.path.join(pro_data_dir, fn))
+        val_df = pd.read_csv(os.path.join(pro_data_dir, 'val_img_df.csv'))
+        y_val = np.asarray(val_df['label']).astype('int').reshape((-1, 1))
+    if task == 'BRAF_fusion':
+        if channel == 1:
+            fn = 'val_arr_1ch_.npy'
+        elif channel == 3:
+            fn = 'val_arr_3ch_.npy'
+        x_val = np.load(os.path.join(pro_data_dir, fn))
+        val_df = pd.read_csv(os.path.join(pro_data_dir, 'val_img_df_.csv'))
+        y_val = np.asarray(val_df['label']).astype('int').reshape((-1, 1))
+    elif task == 'tumor':
+        if channel == 1:
+            fn = '_val_arr_1ch.npy'
+        elif channel == 3:
+            fn = '_val_arr_3ch.npy'
+        x_val = np.load(os.path.join(pro_data_dir, fn))
+        val_df = pd.read_csv(os.path.join(pro_data_dir, '_val_img_df.csv'))
+        y_val = np.asarray(val_df['label']).astype('int').reshape((-1, 1))
 
     datagen = ImageDataGenerator(
         featurewise_center=False,

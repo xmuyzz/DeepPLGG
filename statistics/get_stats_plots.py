@@ -13,7 +13,7 @@ from statistics.write_txt import write_txt
 
 
 
-def get_stats_plots(pro_data_dir, root_dir, run_type, run_model, loss, acc, 
+def get_stats_plots(task, channel, pro_data_dir, root_dir, run_type, run_model, loss, acc, 
                     saved_model, epoch, batch_size, lr, thr_img, 
                     thr_prob, thr_pos, bootstrap):
 
@@ -52,14 +52,53 @@ def get_stats_plots(pro_data_dir, root_dir, run_type, run_model, loss, acc,
         os.makedirs(val_dir)
     if not os.path.exists(test_dir):
         os.makedirs(test_dir)
-
-    ### determine if this is train or test
-    if run_type == 'val':
-        fn_df_pred = 'val_img_pred.csv'
-        save_dir = val_dir
-    elif run_type == 'test':
-        fn_df_pred = 'test_img_pred.csv'
-        save_dir = test_dir
+ 
+    # load data and label based on run type
+    if task == 'BRAF_status':
+        if run_type == 'val':
+            if channel == 1:
+                fn_data = 'val_arr_1ch.npy'
+            elif channel == 3:
+                fn_data = 'val_arr_3ch.npy'
+            fn_pred = 'val_img_pred.csv'
+            save_dir = val_dir
+        elif run_type == 'test':
+            if channel == 1:
+                fn_data = 'test_arr_3ch.npy'
+            elif channel == 3:
+                fn_data = 'test_arr_3ch.npy'
+            fn_pred = 'test_img_pred.csv'
+            save_dir = test_dir
+    if task == 'BRAF_fusion':
+        if run_type == 'val':
+            if channel == 1:
+                fn_data = 'val_arr_1ch_.npy'
+            elif channel == 3:
+                fn_data = 'val_arr_3ch_.npy'
+            fn_pred = 'val_img_pred_.csv'
+            save_dir = val_dir
+        elif run_type == 'test':
+            if channel == 1:
+                fn_data = 'test_arr_3ch_.npy'
+            elif channel == 3:
+                fn_data = 'test_arr_3ch_.npy'
+            fn_pred = 'test_img_pred_.csv'
+            save_dir = test_dir
+    if task == 'tumor':
+        if run_type == 'val':
+            if channel == 1:
+                fn_data = '_val_arr_1ch.npy'
+            elif channel == 3:
+                fn_data = '_val_arr_3ch.npy'
+            fn_pred = '_val_img_pred.csv'
+            save_dir = val_dir
+        elif run_type == 'test':
+            if channel == 1:
+                fn_data = '_test_arr_3ch.npy'
+            elif channel == 3:
+                fn_data = '_test_arr_3ch.npy'
+            fn_pred = '_test_img_pred.csv'
+            save_dir = test_dir
 
     cms = []
     cm_norms = []
@@ -79,8 +118,7 @@ def get_stats_plots(pro_data_dir, root_dir, run_type, run_model, loss, acc,
             thr_pos=thr_pos,
             pro_data_dir=pro_data_dir,
             save_dir=save_dir,
-            fn_df_pred=fn_df_pred
-            )
+            fn_df_pred=fn_pred)
         cms.append(cm)
         cm_norms.append(cm_norm)
         reports.append(report)
@@ -95,8 +133,7 @@ def get_stats_plots(pro_data_dir, root_dir, run_type, run_model, loss, acc,
             color='blue',
             pro_data_dir=pro_data_dir,
             save_dir=save_dir,
-            fn_df_pred=fn_df_pred
-            )
+            fn_df_pred=fn_pred)
         roc_stats.append(roc_stat)
 
         ## PRC curves
@@ -108,8 +145,7 @@ def get_stats_plots(pro_data_dir, root_dir, run_type, run_model, loss, acc,
             color='red',
             pro_data_dir=pro_data_dir,
             save_dir=save_dir,
-            fn_df_pred=fn_df_pred
-            )
+            fn_df_pred=fn_pred)
         prc_aucs.append(prc_auc)
 
     ### save validation results to txt
@@ -127,8 +163,7 @@ def get_stats_plots(pro_data_dir, root_dir, run_type, run_model, loss, acc,
         saved_model=saved_model,
         epoch=epoch,
         batch_size=batch_size,
-        lr=lr
-        )
+        lr=lr)
 
     print('saved model as:', saved_model)
 

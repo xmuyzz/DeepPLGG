@@ -16,7 +16,7 @@ from sklearn.metrics import confusion_matrix, roc_auc_score
 
 
 
-def test(model, run_type, channel, model_dir, pro_data_dir, saved_model, lr, loss_function,
+def test(task, model, run_type, channel, model_dir, pro_data_dir, saved_model, lr, loss_function,
          threshold=0.5, activation='sigmoid', _load_model='load_weights'):    
     
     """
@@ -39,27 +39,56 @@ def test(model, run_type, channel, model_dir, pro_data_dir, saved_model, lr, los
 
 
     # load data and label based on run type
-    #--------------------------------------- 
-    if run_type == 'val':
-        if channel == 1:
-            fn_data = 'val_arr_1ch.npy'
-        elif channel == 3:
-            fn_data = 'val_arr_3ch.npy'
-        fn_label = 'val_img_df.csv'
-        fn_pred = 'val_img_pred.csv'
-    elif run_type == 'test':
-        if channel == 1:
-            fn_data = 'test_arr_3ch.npy'
-        elif channel == 3:
-            fn_data = 'test_arr_3ch.npy'
-        fn_label = 'test_img_df.csv'
-        fn_pred = 'test_img_pred.csv' 
+    if task == 'BRAF_status':
+        if run_type == 'val':
+            if channel == 1:
+                fn_data = 'val_arr_1ch.npy'
+            elif channel == 3:
+                fn_data = 'val_arr_3ch.npy'
+            fn_label = 'val_img_df.csv'
+            fn_pred = 'val_img_pred.csv'
+        elif run_type == 'test':
+            if channel == 1:
+                fn_data = 'test_arr_3ch.npy'
+            elif channel == 3:
+                fn_data = 'test_arr_3ch.npy'
+            fn_label = 'test_img_df.csv'
+            fn_pred = 'test_img_pred.csv' 
+    if task == 'BRAF_fusion':
+        if run_type == 'val':
+            if channel == 1:
+                fn_data = 'val_arr_1ch_.npy'
+            elif channel == 3:
+                fn_data = 'val_arr_3ch_.npy'
+            fn_label = 'val_img_df_.csv'
+            fn_pred = 'val_img_pred_.csv'
+        elif run_type == 'test':
+            if channel == 1:
+                fn_data = 'test_arr_3ch_.npy'
+            elif channel == 3:
+                fn_data = 'test_arr_3ch_.npy'
+            fn_label = 'test_img_df_.csv'
+            fn_pred = 'test_img_pred_.csv'
+    if task == 'tumor':
+        if run_type == 'val':
+            if channel == 1:
+                fn_data = '_val_arr_1ch.npy'
+            elif channel == 3:
+                fn_data = '_val_arr_3ch.npy'
+            fn_label = '_val_img_df.csv'
+            fn_pred = '_val_img_pred.csv'
+        elif run_type == 'test':
+            if channel == 1:
+                fn_data = '_test_arr_3ch.npy'
+            elif channel == 3:
+                fn_data = '_test_arr_3ch.npy'
+            fn_label = '_test_img_df.csv'
+            fn_pred = '_test_img_pred.csv'
     x_data = np.load(os.path.join(pro_data_dir, fn_data))
     df = pd.read_csv(os.path.join(pro_data_dir, fn_label))
     y_label = np.asarray(df['label']).astype('int').reshape((-1, 1))
 
     ## load saved model and evaluate
-    #-------------------------------
     if _load_model == 'load_model':
         model = load_model(os.path.join(model_dir, 'ResNet101V2'))
     elif _load_model == 'load_weights':    # model compile
@@ -88,7 +117,6 @@ def test(model, run_type, channel, model_dir, pro_data_dir, saved_model, lr, los
         y_pred_class = np.argmax(y_pred_prob, axis=1)
 
     # save a dataframe
-    #-----------------
     ID = []
     for file in df['fn']:
         if run_type in ['val', 'test', 'tune']:

@@ -17,7 +17,7 @@ from tensorflow.keras.callbacks import (
 
 
 def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen, 
-          val_gen, x_val, y_val, batch_size, epoch, loss_function, lr): 
+          val_gen, x_val, y_val, batch_size, epoch, loss_function, lr, task): 
 
     """
     train model
@@ -74,8 +74,14 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
         loss=loss_function,
         metrics=[auc])
-
+    model.load_weights(os.path.join(model_dir, '33-0.91.h5'))
     ## fit models
+    if task == 'BRAF_status':
+        class_weight = {0: 3, 1: 1}
+    elif task == 'BRAF_fusion':
+        class_weight = {0: 2, 1: 1}
+    elif task == 'tumor':
+        class_weight = {0: 6, 1: 1}
     history = model.fit(
         train_gen,
         steps_per_epoch=train_gen.n//batch_size,
@@ -88,7 +94,7 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
         callbacks=my_callbacks,
         validation_split=None,
         shuffle=True,
-        class_weight={0: 3, 1: 1},
+        class_weight=class_weight,
         sample_weight=None,
         initial_epoch=0)
     
@@ -100,8 +106,8 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
     print('val acc:', acc)
 
     ## save final model
-    saved_model = str(cnn_model)
-    model.save(os.path.join(model_dir, saved_model))
+    saved_model = str(cnn_model) + 'final.h5'
+    model.save_weights(os.path.join(model_dir, saved_model), save_format='h5',)
     print(saved_model)
     
     ## save validation results to txt file 

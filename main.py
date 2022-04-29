@@ -45,10 +45,12 @@ def main(opt):
     if opt.load_data:
         # data generator
         train_gen = train_generator(
+            task=opt.task,
             pro_data_dir=opt.pro_data_dir,
             batch_size=opt.batch_size,
             channel=opt.channel)
         x_val, y_val, val_gen = val_generator(
+            task=opt.task,
             pro_data_dir=opt.pro_data_dir,
             batch_size=opt.batch_size,
             channel=opt.channel)
@@ -83,12 +85,14 @@ def main(opt):
                 batch_size=opt.batch_size,
                 epoch=opt.epoch,
                 loss_function=opt.loss_function,
-                lr=opt.lr)
+                lr=opt.lr,
+                task=opt.task)
             print('training complete!')
 
     # test model
     if opt.test:
         loss, acc = test(
+            task=opt.task,
             model=my_model,
             run_type=opt.run_type, 
             channel=opt.channel,
@@ -104,6 +108,8 @@ def main(opt):
     # get stats and plots
     if opt.stats_plots:
         get_stats_plots(
+            task=opt.task,
+            channel=opt.channel,
             pro_data_dir=opt.pro_data_dir,
             root_dir=opt.root_dir,
             run_type=opt.run_type,

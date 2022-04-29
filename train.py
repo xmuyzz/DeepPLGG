@@ -17,7 +17,8 @@ from tensorflow.keras.callbacks import (
 
 
 def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen, 
-          val_gen, x_val, y_val, batch_size, epoch, loss_function, lr, task): 
+          val_gen, x_val, y_val, batch_size, epoch, loss_function, lr, task, 
+          freeze_layer, weights): 
 
     """
     train model
@@ -74,7 +75,19 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
         loss=loss_function,
         metrics=[auc])
-    model.load_weights(os.path.join(model_dir, '33-0.91.h5'))
+    
+    ### freeze specific number of layers
+    model.load_weights(os.path.join(model_dir, weights))
+    if freeze_layer != None:
+        for layer in model.layers[0:freeze_layer]:
+            layer.trainable = False
+        for layer in model.layers:
+            print(layer, layer.trainable)
+    else:
+        for layer in model.layers:
+            layer.trainable = True
+    model.summary()
+    
     ## fit models
     if task == 'BRAF_status':
         class_weight = {0: 3, 1: 1}

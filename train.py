@@ -18,7 +18,7 @@ from tensorflow.keras.callbacks import (
 
 def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen, 
           val_gen, x_val, y_val, batch_size, epoch, loss_function, lr, task, 
-          freeze_layer, weights): 
+          freeze_layer, trained_weights): 
 
     """
     train model
@@ -77,7 +77,7 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
         metrics=[auc])
     
     ### freeze specific number of layers
-    model.load_weights(os.path.join(model_dir, weights))
+    model.load_weights(os.path.join(model_dir, trained_weights))
     if freeze_layer != None:
         for layer in model.layers[0:freeze_layer]:
             layer.trainable = False
@@ -142,7 +142,7 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
             batch_size=batch_size,
             lr=lr)
 
-    
+    return model 
 
 
     

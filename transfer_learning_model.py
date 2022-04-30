@@ -1,5 +1,6 @@
 import os
 import tensorflow as tf
+from tensorflow.keras import Input
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import img_to_array, load_img, ImageDataGenerator
 from tensorflow.keras.layers import GlobalAveragePooling2D
@@ -13,7 +14,7 @@ from models.simple_cnn import simple_cnn
 
 
 
-def generate_model(cnn_model, weights, input_shape, activation):
+def transfer_model(cnn_model, weights, input_shape, activation):
 
 
     """
@@ -124,11 +125,10 @@ def generate_model(cnn_model, weights, input_shape, activation):
             base_model = DenseNet201(weights=weights, include_top=include_top,
                 input_shape=input_shape, pooling=None)
         
-        base_model.trainable = True
+        base_model.trainable = False
 
-     ### create top model
-        inputs = base_model.input
-        x = base_model.output
+        inputs = Input(shape=input_shape)
+        x = base_model(inputs, training=False)
         x = GlobalAveragePooling2D()(x)
         x = Dropout(0.3)(x)
         x = Dense(1000, activation='relu')(x)

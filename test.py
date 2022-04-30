@@ -88,9 +88,9 @@ def test(task, model, run_type, channel, model_dir, pro_data_dir, saved_model, l
     df = pd.read_csv(os.path.join(pro_data_dir, fn_label))
     y_label = np.asarray(df['label']).astype('int').reshape((-1, 1))
 
-    ## load saved model and evaluate
+    # load saved model and evaluate
     if _load_model == 'load_model':
-        model = load_model(os.path.join(model_dir, 'ResNet101V2'))
+        model = load_model(os.path.join(model_dir, saved_model))
     elif _load_model == 'load_weights':    # model compile
         auc = tf.keras.metrics.AUC()
         model.compile(
@@ -98,6 +98,7 @@ def test(task, model, run_type, channel, model_dir, pro_data_dir, saved_model, l
             loss=loss_function,
             metrics=[auc])
         model.load_weights(os.path.join(model_dir, saved_model))
+    model.load_weights(os.path.join(model_dir, saved_model))
     y_pred = model.predict(x_data)
     score = model.evaluate(x_data, y_label)
     loss = np.around(score[0], 3)

@@ -63,15 +63,12 @@ def main(opt):
         my_model = generate_model(
             cnn_model=opt.cnn_model,
             weights=opt.weights,
-            freeze_layer=opt.freeze_layer,
             input_shape=opt.input_shape,
-            activation=opt.activation,
-            loss_function=opt.loss_function,
-            lr=opt.lr)
+            activation=opt.activation)
 
         ## train model
         if opt.train:
-            train(
+            final_model = train(
                 root_dir=opt.root_dir,
                 out_dir=opt.out_dir,
                 log_dir=opt.log_dir,
@@ -86,7 +83,9 @@ def main(opt):
                 epoch=opt.epoch,
                 loss_function=opt.loss_function,
                 lr=opt.lr,
-                task=opt.task)
+                task=opt.task,
+                freeze_layer=opt.freeze_layer,
+                trained_weights=opt.trained_weights)
             print('training complete!')
 
     # test model
@@ -102,7 +101,8 @@ def main(opt):
             lr=opt.lr,
             loss_function=opt.loss_function,
             threshold=opt.thr_img, 
-            activation=opt.activation)
+            activation=opt.activation,
+            _load_model=opt._load_model)
         print('testing complete!')
 
     # get stats and plots

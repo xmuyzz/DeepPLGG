@@ -39,6 +39,7 @@ def parse_opts():
     parser.add_argument('--n_bootstrap', default=50, type=int, help='n times of bootstrap to calcualte 95% CI')
     parser.add_argument('--saved_model', default='04-0.91.h5', type=str, help='saved model name')    
     parser.add_argument('--_load_model', default='load_weights', type=str, help='load_model|load_weights')
+    
     # fine tune model
     parser.add_argument('--tuned_model', default='Tuned_EffNetB4', type=str, help='tuned model')    
     

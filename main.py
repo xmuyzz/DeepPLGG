@@ -12,6 +12,7 @@ import tensorflow as tf
 from data_generator import train_generator
 from data_generator import val_generator
 from generate_model import generate_model
+from transfer_model import transfer_model
 from train import train
 from test import test
 from opts import parse_opts
@@ -58,35 +59,41 @@ def main(opt):
     # get CNN model
     #cnns = ['simple_cnn', 'ResNet101V2', 'EfficientNetB4', 'MobileNetV2', 
     #        'DenseNet121', 'IncepttionV3', 'VGG16']
-    cnns = ['ResNet101V2']
-    for cnn_model in cnns:
+    #for cnn_model in cnns:
+    if opt.transfer_learning:
+        my_model = transfer_model(
+            cnn_model=opt.cnn_model,
+            weights=opt.weights,
+            input_shape=opt.input_shape,
+            activation=opt.activation)
+    else:
         my_model = generate_model(
             cnn_model=opt.cnn_model,
             weights=opt.weights,
             input_shape=opt.input_shape,
             activation=opt.activation)
 
-        ## train model
-        if opt.train:
-            final_model = train(
-                root_dir=opt.root_dir,
-                out_dir=opt.out_dir,
-                log_dir=opt.log_dir,
-                model_dir=opt.model_dir,
-                model=my_model,
-                cnn_model=cnn_model,
-                train_gen=train_gen,
-                val_gen=val_gen,
-                x_val=x_val,
-                y_val=y_val,
-                batch_size=opt.batch_size,
-                epoch=opt.epoch,
-                loss_function=opt.loss_function,
-                lr=opt.lr,
-                task=opt.task,
-                freeze_layer=opt.freeze_layer,
-                trained_weights=opt.trained_weights)
-            print('training complete!')
+    # train model
+    if opt.train:
+        final_model = train(
+            root_dir=opt.root_dir,
+            out_dir=opt.out_dir,
+            log_dir=opt.log_dir,
+            model_dir=opt.model_dir,
+            model=my_model,
+            cnn_model=opt.cnn_model,
+            train_gen=train_gen,
+            val_gen=val_gen,
+            x_val=x_val,
+            y_val=y_val,
+            batch_size=opt.batch_size,
+            epoch=opt.epoch,
+            loss_function=opt.loss_function,
+            lr=opt.lr,
+            task=opt.task,
+            freeze_layer=opt.freeze_layer,
+            trained_weights=opt.trained_weights)
+        print('training complete!')
 
     # test model
     if opt.test:

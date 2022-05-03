@@ -32,7 +32,8 @@ def pat_data(curation_dir):
     return df_train, df_val, df_test
 
 
-def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel, save_nii, nii_dir):
+def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel, save_nii, nii_dir,
+             normal_slices='16_slices'):
 
     """
     get stacked image slices from scan level CT and corresponding labels and IDs;
@@ -62,20 +63,37 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel, save_nii,
             img_dir=img_dir, 
             interp_type='nearest_neighbor',
             resize_shape=(192, 192))
-        
         # make labels
-        n = img.shape[0]
-        if wmax - wmin <= 4:
-            label1 = [0] * (wmin - 1)
-            label2 = [1] * (wmax - wmin + 1)
-            label3 = [0] * (n - wmax)
-            label = label1 + label2 + label3 
-        else:
-            label1 = [0] * (wmin + 1)
-            label2 = [1] * (wmax - wmin - 3)
-            label3 = [0] * (n - wmax + 2)
-            label = label1 + label2 + label3
-        labels.extend(label)
+        if normal_slices == 'rest_slices':
+            n = img.shape[0]
+            if wmax - wmin <= 4:
+                label1 = [0] * (wmin - 1)
+                label2 = [1] * (wmax - wmin + 1)
+                label3 = [0] * (n - wmax)
+                label = label1 + label2 + label3 
+            else:
+                label1 = [0] * (wmin + 1)
+                label2 = [1] * (wmax - wmin - 3)
+                label3 = [0] * (n - wmax + 2)
+                label = label1 + label2 + label3
+            labels.extend(label)
+            img = img
+        elif normal_slices == '16_slices':
+            n = img.shape[0]
+            if wmax - wmin <= 4:
+                label1 = [0] * 8
+                label2 = [1] * (wmax - wmin + 1)
+                label3 = [0] * 8
+                label = label1 + label2 + label3
+                slice_range = range(wmin - 8, wmax + 9)
+            else:
+                label1 = [0] * 8
+                label2 = [1] * (wmax - wmin - 3)
+                label3 = [0] * 8
+                label = label1 + label2 + label3
+                slice_range = range(wmin - 6, wmax + 7)
+            labels.extend(label)
+            img = img[slice_range , :, :]
         # normalize signlas to [0, 1]
         data = np.interp(img, (img.min(), img.max()), (0, 1))
         # stack all image arrays to one array for CNN input

@@ -33,96 +33,90 @@ def transfer_model(cnn_model, weights, input_shape, activation):
        
     if cnn_model == 'simple_cnn':
         model = simple_cnn(input_shape=input_shape, activation=activation)
-    else:
-        ### determine input shape
-        default_shape = (224, 224, 3)
-        if input_shape == default_shape:
-            include_top = True
-        else:
-            include_top = False
 
+    else:
         # Inception
         if cnn_model == 'InceptionV3':
-            base_model = InceptionV3(weights=weights, include_top=include_top,
+            base_model = InceptionV3(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'Xception':
-            base_model = Xception(weights=weights, include_top=include_top,
+            base_model = Xception(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'InceptionResNetV2':
-            base_model = InceptionResNetV2(weights=weights, include_top=include_top,
+            base_model = InceptionResNetV2(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
 
         # ResNet
         elif cnn_model == 'ResNet50V2':
-            base_model = ResNet50V2(weights=weights, include_top=include_top,
+            base_model = ResNet50V2(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'ResNet101V2':
-            base_model = ResNet101V2(weights=weights, include_top=include_top,
+            base_model = ResNet101V2(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'ResNet152V2':
-            base_model = ResNet152V2(weights=weights, include_top=include_top,
+            base_model = ResNet152V2(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         if cnn_model == 'ResNet50':
-            base_model = ResNet50(weights=weights, include_top=include_top,
+            base_model = ResNet50(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'ResNet101':
-            base_model = ResNet101(weights=weights, include_top=include_top,
+            base_model = ResNet101(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'ResNet152':
-            base_model = ResNet152(weights=weights, include_top=include_top,
+            base_model = ResNet152(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
 
         # EfficientNet
         elif cnn_model == 'EfficientNetB0':
-            base_model = EfficientNetB0(weights=weights, include_top=include_top,
+            base_model = EfficientNetB0(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'EfficientNetB1':
-            base_model = EfficientNetB1(weights=weights, include_top=include_top,
+            base_model = EfficientNetB1(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'EfficientNetB2':
-            base_model = EfficientNetB2(weights=weights, include_top=include_top,
+            base_model = EfficientNetB2(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         if cnn_model == 'EfficientNetB3':
-            base_model = EfficientNetB3(weights=weights, include_top=include_top,
+            base_model = EfficientNetB3(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'EfficientNetB4':
-            base_model = EfficientNetB4(weights=weights, include_top=include_top,
+            base_model = EfficientNetB4(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'EffcientNetB5':
-            base_model = EfficientNetB5(weights=weights, include_top=include_top,
+            base_model = EfficientNetB5(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'EfficientNetB6':
-            base_model = EfficientNetB6(weights=weights, include_top=include_top,
+            base_model = EfficientNetB6(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'EffcientNetB7':
-            base_model = EfficientNetB7(weights=weights, include_top=include_top,
+            base_model = EfficientNetB7(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
 
         # MobileNet
         if cnn_model == 'MobileNet':
-            base_model = MobileNet(weights=weights, include_top=include_top,
+            base_model = MobileNet(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'MobileNetV2':
-            base_model = MobileNetV2(weights=weights, include_top=include_top,
+            base_model = MobileNetV2(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
 
         # VGG
         if cnn_model == 'VGG16':
-            base_model = VGG16(weights=weights, include_top=include_top,
+            base_model = VGG16(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'VGG19':
-            base_model = VGG19(weights=weights, include_top=include_top,
+            base_model = VGG19(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
 
         # DenseNet
         if cnn_model == 'DenseNet121':
-            base_model = DenseNet121(weights=weights, include_top=include_top,
+            base_model = DenseNet121(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'DenseNet169':
-            base_model = VGG19(weights=weights, include_top=include_top,
+            base_model = VGG19(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         elif cnn_model == 'DenseNet201':
-            base_model = DenseNet201(weights=weights, include_top=include_top,
+            base_model = DenseNet201(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
         
         base_model.trainable = False
@@ -131,7 +125,7 @@ def transfer_model(cnn_model, weights, input_shape, activation):
         x = base_model(inputs, training=False)
         x = GlobalAveragePooling2D()(x)
         x = Dropout(0.3)(x)
-        x = Dense(1000, activation='relu')(x)
+        x = Dense(256, activation='relu')(x)
         x = Dropout(0.3)(x)
         outputs = Dense(1, activation=activation)(x)
         model = Model(inputs=inputs, outputs=outputs)

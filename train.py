@@ -75,26 +75,14 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
         loss=loss_function,
         metrics=[auc])
-    
-    ### freeze specific number of layers
-#    model.load_weights(os.path.join(model_dir, trained_weights))
-#    if freeze_layer != None:
-#        for layer in model.layers[0:freeze_layer]:
-#            layer.trainable = False
-#        for layer in model.layers:
-#            print(layer, layer.trainable)
-#    else:
-#        for layer in model.layers:
-#            layer.trainable = True
-#    model.summary()
-    
-    ## fit models
+     
+    # fit models
     if task == 'BRAF_status':
         class_weight = {0: 3, 1: 1}
     elif task == 'BRAF_fusion':
         class_weight = {0: 2, 1: 1}
     elif task == 'tumor':
-        class_weight = None
+        class_weight = {0: 1, 1: 6}
     history = model.fit(
         train_gen,
         steps_per_epoch=train_gen.n//batch_size,

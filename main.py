@@ -63,13 +63,15 @@ def main(opt):
     if opt.transfer_learning:
         my_model = transfer_model(
             cnn_model=opt.cnn_model,
-            weights=opt.weights,
             input_shape=opt.input_shape,
-            activation=opt.activation)
+            activation=opt.activation,
+            freeze_layer=opt.freeze_layer,
+            model_dir=opt.model_dir,
+            trained_weights=opt.trained_weights,
+            fine_tune_model=opt.fine_tune_model)
     else:
         my_model = generate_model(
             cnn_model=opt.cnn_model,
-            weights=opt.weights,
             input_shape=opt.input_shape,
             activation=opt.activation)
 

@@ -14,7 +14,8 @@ from models.simple_cnn import simple_cnn
 
 
 
-def transfer_model(cnn_model, weights, input_shape, activation):
+def transfer_model(cnn_model, input_shape, activation, freeze_layer, model_dir, trained_weights,
+                   fine_tune_model):
 
 
     """
@@ -33,8 +34,20 @@ def transfer_model(cnn_model, weights, input_shape, activation):
        
     if cnn_model == 'simple_cnn':
         model = simple_cnn(input_shape=input_shape, activation=activation)
+        # freeze specific number of layers
+        model.load_weights(os.path.join(model_dir, trained_weights))
+        if freeze_layer != None:
+            for layer in model.layers[0:freeze_layer]:
+                layer.trainable = False
+            for layer in model.layers:
+                print(layer, layer.trainable)
+        else:
+            for layer in model.layers:
+                layer.trainable = True
+        model.summary()
 
     else:
+        weights = 'imagenet'
         # Inception
         if cnn_model == 'InceptionV3':
             base_model = InceptionV3(weights=weights, include_top=False,
@@ -118,8 +131,11 @@ def transfer_model(cnn_model, weights, input_shape, activation):
         elif cnn_model == 'DenseNet201':
             base_model = DenseNet201(weights=weights, include_top=False,
                 input_shape=input_shape, pooling=None)
-        
-        base_model.trainable = False
+       
+        if fine_tune_model:
+            base_model.trainable = True
+        else:
+            base_model.trainable = False
 
         inputs = Input(shape=input_shape)
         x = base_model(inputs, training=False)
@@ -129,6 +145,10 @@ def transfer_model(cnn_model, weights, input_shape, activation):
         x = Dropout(0.3)(x)
         outputs = Dense(1, activation=activation)(x)
         model = Model(inputs=inputs, outputs=outputs)
+        
+        if fine_tune_model:
+            model.load_weights(os.path.join(model_dir, trained_weights))
+            print(base_model)
 
         model.summary()
 

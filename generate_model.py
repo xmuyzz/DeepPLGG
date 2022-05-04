@@ -13,7 +13,7 @@ from models.simple_cnn import simple_cnn
 
 
 
-def generate_model(cnn_model, weights, input_shape, activation):
+def generate_model(cnn_model, input_shape, activation):
 
 
     """
@@ -33,13 +33,8 @@ def generate_model(cnn_model, weights, input_shape, activation):
     if cnn_model == 'simple_cnn':
         model = simple_cnn(input_shape=input_shape, activation=activation)
     else:
-        ### determine input shape
-        default_shape = (224, 224, 3)
-        if input_shape == default_shape:
-            include_top = True
-        else:
-            include_top = False
-
+        include_top = False
+        weights = None
         # Inception
         if cnn_model == 'InceptionV3':
             base_model = InceptionV3(weights=weights, include_top=include_top,
@@ -131,7 +126,7 @@ def generate_model(cnn_model, weights, input_shape, activation):
         x = base_model.output
         x = GlobalAveragePooling2D()(x)
         x = Dropout(0.3)(x)
-        x = Dense(1000, activation='relu')(x)
+        x = Dense(256, activation='relu')(x)
         x = Dropout(0.3)(x)
         outputs = Dense(1, activation=activation)(x)
         model = Model(inputs=inputs, outputs=outputs)

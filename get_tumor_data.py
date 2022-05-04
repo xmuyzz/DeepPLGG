@@ -33,7 +33,7 @@ def pat_data(curation_dir):
 
 
 def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel, save_nii, nii_dir,
-             normal_slices='16_slices'):
+             normal_slices='rest_slices'):
 
     """
     get stacked image slices from scan level CT and corresponding labels and IDs;
@@ -77,7 +77,6 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel, save_nii,
                 label3 = [0] * (n - wmax + 2)
                 label = label1 + label2 + label3
             labels.extend(label)
-            img = img
         elif normal_slices == '16_slices':
             n = img.shape[0]
             if wmax - wmin <= 4:

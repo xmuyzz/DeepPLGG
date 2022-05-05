@@ -68,7 +68,8 @@ def main(opt):
             freeze_layer=opt.freeze_layer,
             model_dir=opt.model_dir,
             trained_weights=opt.trained_weights,
-            fine_tune_model=opt.fine_tune_model)
+            saved_model=opt.saved_model,
+            tune_step=opt.tune_step)
     else:
         my_model = generate_model(
             cnn_model=opt.cnn_model,

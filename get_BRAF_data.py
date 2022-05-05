@@ -132,7 +132,7 @@ def img_data(pro_data_dir, df, fn_arr_1ch, fn_arr_3ch, fn_df, channel, save_nii,
     pd.set_option('display.max_rows', 500)
     #print(img_df[0:100])
     img_df.to_csv(os.path.join(pro_data_dir, fn_df))
-    print('data size:', img_df)
+    print('data size:', img_df.shape[0])
     print(img_df['label'].value_counts())
 
 
@@ -188,11 +188,11 @@ if __name__ == '__main__':
         print('provide root dir to start!')
 
     df_train, df_val, df_test = pat_data(
-        BRAF=opt.BRAF,
+        task=opt.task,
         curation_dir=opt.curation_dir)
 
     get_img_dataset(
-        BRAF=opt.BRAF,
+        task=opt.task,
         pro_data_dir=opt.pro_data_dir, 
         df_train=df_train,
         df_val=df_val,

@@ -32,6 +32,7 @@ def generate_model(cnn_model, input_shape, activation):
        
     if cnn_model == 'simple_cnn':
         model = simple_cnn(input_shape=input_shape, activation=activation)
+        model.summary()
     else:
         include_top = False
         weights = None
@@ -121,15 +122,22 @@ def generate_model(cnn_model, input_shape, activation):
         
         base_model.trainable = True
 
-     ### create top model
+        # create top model
         inputs = base_model.input
         x = base_model.output
         x = GlobalAveragePooling2D()(x)
         x = Dropout(0.3)(x)
-        x = Dense(256, activation='relu')(x)
+        x = Dense(1024, activation='relu')(x)
         x = Dropout(0.3)(x)
         outputs = Dense(1, activation=activation)(x)
         model = Model(inputs=inputs, outputs=outputs)
+        
+        freeze_layer = False
+        if freeze_layer:
+            for layer in model.layers[0:6]:
+                layer.trainable = False
+            for layer in model.layers:
+                print(layer, layer.trainable)
 
         model.summary()
 

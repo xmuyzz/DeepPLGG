@@ -45,7 +45,7 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
 
     ## call back functions
     check_point = tf.keras.callbacks.ModelCheckpoint(
-        filepath=os.path.join(model_dir, task + '_' + cnn_model + '-{epoch:02d}-{val_auc:.2f}.h5'),
+        filepath=os.path.join(model_dir, str(cnn_model) + '-{epoch:02d}-{val_auc:.2f}.h5'),
         monitor='val_auc',  
         save_best_only=False,
         save_weights_only=True,

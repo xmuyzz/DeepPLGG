@@ -47,14 +47,14 @@ def simple_cnn(input_shape, activation):
     #model.add(Dropout(0.3))
 
     model.add(BatchNormalization(momentum=0.95))
-    model.add(Conv2D(64, kernel_size=(3, 3), activation='leaky_relu'))
+    model.add(Conv2D(32, kernel_size=(3, 3), activation='leaky_relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     #model.add(Dropout(0.3))
     
     model.add(BatchNormalization(momentum=0.95))
-    model.add(Conv2D(128, kernel_size=(3, 3), activation='leaky_relu'))
+    model.add(Conv2D(64, kernel_size=(3, 3), activation='leaky_relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.3))
+    #model.add(Dropout(0.3))
 
     model.add(BatchNormalization(momentum=0.95))
     model.add(Conv2D(128, kernel_size=(3, 3), activation='leaky_relu'))
@@ -63,11 +63,11 @@ def simple_cnn(input_shape, activation):
 
     model.add(Flatten())
     model.add(BatchNormalization(momentum=0.95))
-    model.add(Dense(256, activation='relu'))
+    model.add(Dense(1024, activation='leaky_relu'))
     model.add(Dropout(0.3))
     
     model.add(BatchNormalization(momentum=0.95))
-    model.add(Dense(128, activation='relu'))
+    model.add(Dense(256, activation='leaky_relu'))
     model.add(Dropout(0.3))
     model.add(Dense(n_output, activation=activation))
 

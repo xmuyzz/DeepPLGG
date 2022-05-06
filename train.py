@@ -45,9 +45,9 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
 
     ## call back functions
     check_point = tf.keras.callbacks.ModelCheckpoint(
-        filepath=os.path.join(model_dir, task + '_' + cnn_model + '-{epoch:02d}-{val_auc:.2f}.h5'),
+        filepath=os.path.join(model_dir, task + '_' + cnn_model + '_{epoch:02d}_{val_auc:.2f}.h5'),
         monitor='val_auc',  
-        save_best_only=False,
+        save_best_only=True,
         save_weights_only=True,
         mode='max')  # determine better models according to "max" AUC.
     early_stopping = EarlyStopping(
@@ -83,6 +83,10 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
         class_weight = {0: 2, 1: 1}
     elif task == 'tumor':
         class_weight = {0: 1, 1: 6}
+    elif task == 'PFS_3yr':
+        class_weight = {0: 5, 1: 3}
+    elif task == 'PFS_2yr':
+        class_weight = {0: 1, 1: 1}
     history = model.fit(
         train_gen,
         steps_per_epoch=train_gen.n//batch_size,

@@ -13,11 +13,13 @@ from opts import parse_opts
 def pat_data(task, curation_dir):
 
     # labels
-    df = pd.read_csv(os.path.join(curation_dir, 'BRAF_slice.csv'))
-    df = df[~df['BRAF-Status'].isin(['In Review'])]
+    df = pd.read_csv(os.path.join(curation_dir, 'BRAF_survival_slice.csv'))
+    #print(df)
     labels = []
     img_dirs = []
+    print('task:', task)
     if task == 'BRAF_status':
+        df = df[~df['BRAF-Status'].isin(['In Review'])]
         for braf in df['BRAF-Status']:
             if braf == 'No BRAF mutation':
                 label = 0
@@ -27,12 +29,19 @@ def pat_data(task, curation_dir):
                 #print(braf)
             labels.append(label)
     elif task == 'BRAF_fusion':
+        df = df[~df['BRAF-Status'].isin(['In Review'])]
         for braf in df['BRAF-Status']:
             if braf in ['No BRAF mutation', 'V600E', 'p.V600E', 'LGG, BRAF V600E']:
                 label = 0
             else:
                 label = 1
             labels.append(label)
+    elif task == 'PFS_3yr':
+        df.dropna(subset=['3yr_event'], inplace=True)
+        labels = df['3yr_event'].to_list()
+    elif task == 'PFS_2yr':
+        df.dropna(subset=['2yr_event'], inplace=True)
+        labels = df['2yr_event'].to_list()
     df['label'] = labels
 
     # train test split
@@ -158,7 +167,14 @@ def get_img_dataset(task, pro_data_dir, df_train, df_val, df_test, channel, save
         fns_arr_1ch = ['train_arr_1ch_.npy', 'val_arr_1ch_.npy', 'test_arr_1ch_.npy']
         fns_arr_3ch = ['train_arr_3ch_.npy', 'val_arr_3ch_.npy', 'test_arr_3ch_.npy']
         fns_df = ['train_img_df_.csv', 'val_img_df_.csv', 'test_img_df_.csv']
-
+    elif task == 'PFS_3yr':
+        fns_arr_1ch = ['train_1ch_3yr.npy', 'val_1ch_3yr.npy', 'test_1ch_3yr.npy']
+        fns_arr_3ch = ['train_3ch_3yr.npy', 'val_3ch_3yr.npy', 'test_3ch_3yr.npy']
+        fns_df = ['train_df_3yr.csv', 'val_df_3yr.csv', 'test_df_3yr.csv']
+    elif task == 'PFS_2yr':
+        fns_arr_1ch = ['train_1ch_2yr.npy', 'val_1ch_2yr.npy', 'test_1ch_2yr.npy']
+        fns_arr_3ch = ['train_3ch_2yr.npy', 'val_3ch_2yr.npy', 'test_3ch_2yr.npy']
+        fns_df = ['train_df_2yr.csv', 'val_df_2yr.csv', 'test_df_2yr.csv']
     for df, fn_arr_1ch, fn_arr_3ch, fn_df in zip(dfs, fns_arr_1ch, fns_arr_3ch, fns_df):
         img_data(
             pro_data_dir=pro_data_dir,

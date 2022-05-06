@@ -51,6 +51,22 @@ def train_generator(task, pro_data_dir, batch_size, channel):
         x_train = np.load(os.path.join(pro_data_dir, fn))
         train_df = pd.read_csv(os.path.join(pro_data_dir, '_train_img_df.csv'))
         y_train = np.asarray(train_df['label']).astype('int').reshape((-1, 1))
+    elif task == 'PFS_3yr':
+        if channel == 1:
+            fn = 'train_1ch_3yr.npy'
+        elif channel == 3:
+            fn = 'train_3ch_3yr.npy'
+        x_train = np.load(os.path.join(pro_data_dir, fn))
+        train_df = pd.read_csv(os.path.join(pro_data_dir, 'train_df_3yr.csv'))
+        y_train = np.asarray(train_df['label']).astype('int').reshape((-1, 1))
+    elif task == 'PFS_2yr':
+        if channel == 1:
+            fn = 'train_1ch_2yr.npy'
+        elif channel == 3:
+            fn = 'train_3ch_2yr.npy'
+        x_train = np.load(os.path.join(pro_data_dir, fn))
+        train_df = pd.read_csv(os.path.join(pro_data_dir, 'train_df_2yr.csv'))
+        y_train = np.asarray(train_df['label']).astype('int').reshape((-1, 1))
 
     ## data generator
     datagen = ImageDataGenerator(
@@ -129,6 +145,22 @@ def val_generator(task, pro_data_dir, batch_size, channel):
             fn = '_val_arr_3ch.npy'
         x_val = np.load(os.path.join(pro_data_dir, fn))
         val_df = pd.read_csv(os.path.join(pro_data_dir, '_val_img_df.csv'))
+        y_val = np.asarray(val_df['label']).astype('int').reshape((-1, 1))
+    elif task == 'PFS_3yr':
+        if channel == 1:
+            fn = 'val_1ch_3yr.npy'
+        elif channel == 3:
+            fn = 'val_3ch_3yr.npy'
+        x_train = np.load(os.path.join(pro_data_dir, fn))
+        val_df = pd.read_csv(os.path.join(pro_data_dir, 'val_df_3yr.csv'))
+        y_val = np.asarray(val_df['label']).astype('int').reshape((-1, 1))
+    elif task == 'PFS_2yr':
+        if channel == 1:
+            fn = 'val_1ch_2yr.npy'
+        elif channel == 3:
+            fn = 'val_3ch_2yr.npy'
+        x_val = np.load(os.path.join(pro_data_dir, fn))
+        val_df = pd.read_csv(os.path.join(pro_data_dir, 'val_df_2yr.csv'))
         y_val = np.asarray(val_df['label']).astype('int').reshape((-1, 1))
 
     datagen = ImageDataGenerator(

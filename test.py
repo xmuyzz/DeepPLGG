@@ -84,6 +84,36 @@ def test(task, model, run_type, channel, model_dir, pro_data_dir, saved_model, l
                 fn_data = '_test_arr_3ch.npy'
             fn_label = '_test_img_df.csv'
             fn_pred = '_test_img_pred.csv'
+    if task == 'PFS_3yr':
+        if run_type == 'val':
+            if channel == 1:
+                fn_data = 'val_1ch_3yr.npy'
+            elif channel == 3:
+                fn_data = 'val_3ch_3yr.npy'
+            fn_label = 'val_df_3yr.csv'
+            fn_pred = 'val_pred_3yr.csv'
+        elif run_type == 'test':
+            if channel == 1:
+                fn_data = 'test_3ch_3yr.npy'
+            elif channel == 3:
+                fn_data = 'test_3ch_3yr.npy'
+            fn_label = 'test_df_3yr.csv'
+            fn_pred = 'test_pred_3yr.csv'
+    if task == 'PFS_2yr':
+        if run_type == 'val':
+            if channel == 1:
+                fn_data = 'val_1ch_2yr.npy'
+            elif channel == 3:
+                fn_data = 'val_3ch_2yr.npy'
+            fn_label = 'val_df_2yr.csv'
+            fn_pred = 'val_pred_2yr.csv'
+        elif run_type == 'test':
+            if channel == 1:
+                fn_data = 'test_3ch_2yr.npy'
+            elif channel == 3:
+                fn_data = 'test_3ch_2yr.npy'
+            fn_label = 'test_df_2yr.csv'
+            fn_pred = 'test_pred_2yr.csv'
     x_data = np.load(os.path.join(pro_data_dir, fn_data))
     df = pd.read_csv(os.path.join(pro_data_dir, fn_label))
     y_label = np.asarray(df['label']).astype('int').reshape((-1, 1))

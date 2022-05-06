@@ -29,7 +29,7 @@ def parse_opts():
     parser.add_argument('--epoch', default=100, type=int, help='Epoch')
     parser.add_argument('--activation', default='sigmoid', type=str, help='Activation function on last layer')
     parser.add_argument('--loss_function',  default='binary_crossentropy', type=str, help='loss function')
-    parser.add_argument('--cnn_model', default='simple_cnn', type=str, help='cnn model')
+    parser.add_argument('--cnn_model', default='VGG16', type=str, help='cnn model')
     parser.add_argument('--input_shape', default=(192, 192, 3), type=int, help='Input shape')
     
     # test model   
@@ -47,7 +47,7 @@ def parse_opts():
 
     # actions
     parser.add_argument('--transfer_learning', action='store_true', help='If true, training is performed.')
-    parser.set_defaults(transfer_learning=True)
+    parser.set_defaults(transfer_learning=False)
     parser.add_argument('--train', action='store_true', help='If true, training is performed.')
     parser.set_defaults(train=True)
     parser.add_argument('--test', action='store_true', help='If true, validation is performed.')

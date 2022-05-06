@@ -15,8 +15,7 @@ from models.simple_cnn import simple_cnn
 
 
 def transfer_model(cnn_model, input_shape, activation, freeze_layer, model_dir, trained_weights,
-                   saved_model, tune_step='pre_train'):
-
+                   saved_model, tune_step='pre_train', lock_base_model=False):
 
     """
     EfficientNet
@@ -35,7 +34,7 @@ def transfer_model(cnn_model, input_shape, activation, freeze_layer, model_dir, 
     if cnn_model == 'simple_cnn':
         model = simple_cnn(input_shape=input_shape, activation=activation)
         if freeze_layer != None:
-            for layer in model.layers[0:freeze_layer]:
+            for layer in model.layers[0:12]:
                 layer.trainable = False
             for layer in model.layers:
                 print(layer, layer.trainable)
@@ -143,6 +142,15 @@ def transfer_model(cnn_model, input_shape, activation, freeze_layer, model_dir, 
             x = Dropout(0.3)(x)
             outputs = Dense(1, activation=activation)(x)
             model = Model(inputs=inputs, outputs=outputs)
+            
+            if lock_base_model:
+                base_model.trainable = False
+            else:
+                base_model.trainable = True
+                for layer in model.layers[0:16]:
+                    layer.trainable = False
+                for layer in model.layers:
+                    print(layer, layer.trainable)
 
         elif tune_step == 'fine_tune':
             model = load_model(os.path.join(model_dir, saved_model))

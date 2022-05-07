@@ -151,7 +151,7 @@ def val_generator(task, pro_data_dir, batch_size, channel):
             fn = 'val_1ch_3yr.npy'
         elif channel == 3:
             fn = 'val_3ch_3yr.npy'
-        x_train = np.load(os.path.join(pro_data_dir, fn))
+        x_val = np.load(os.path.join(pro_data_dir, fn))
         val_df = pd.read_csv(os.path.join(pro_data_dir, 'val_df_3yr.csv'))
         y_val = np.asarray(val_df['label']).astype('int').reshape((-1, 1))
     elif task == 'PFS_2yr':

@@ -99,6 +99,36 @@ def get_stats_plots(task, channel, pro_data_dir, root_dir, run_type, run_model, 
                 fn_data = '_test_arr_3ch.npy'
             fn_pred = '_test_img_pred.csv'
             save_dir = test_dir
+    if task == 'PFS_2yr':
+        if run_type == 'val':
+            if channel == 1:
+                fn_data = 'val_1ch_2yr.npy'
+            elif channel == 3:
+                fn_data = 'val_3ch_2yr.npy'
+            fn_pred = 'val_img_pred_.csv'
+            save_dir = val_dir
+        elif run_type == 'test':
+            if channel == 1:
+                fn_data = 'test_3ch_2yr.npy'
+            elif channel == 3:
+                fn_data = 'test_3ch_2yr.npy'
+            fn_pred = 'test_pred_2yr.csv'
+            save_dir = test_dir
+    if task == 'PFS_3yr':
+        if run_type == 'val':
+            if channel == 1:
+                fn_data = 'val_1ch_3yr.npy'
+            elif channel == 3:
+                fn_data = 'val_3ch_3yr.npy'
+            fn_pred = 'val_pred_3yr.csv'
+            save_dir = val_dir
+        elif run_type == 'test':
+            if channel == 1:
+                fn_data = 'test_3ch_3yr.npy'
+            elif channel == 3:
+                fn_data = 'test_3ch_3yr.npy'
+            fn_pred = 'test_pred_3yr.csv'
+            save_dir = test_dir
 
     cms = []
     cm_norms = []

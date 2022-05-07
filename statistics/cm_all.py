@@ -33,7 +33,7 @@ def cm_all(run_type, level, thr_img, thr_prob, thr_pos, pro_data_dir, save_dir, 
         print_info = 'cm image:'
 
     elif level == 'patient_mean_prob': 
-        df_mean = df_sum.groupby(['ID']).mean()
+        df_mean = df_sum.groupby(['ID']).mean().reset_index()
         y_true = df_mean['label'].to_numpy()
         preds = df_mean['y_pred'].to_numpy()
         y_pred = []
@@ -44,6 +44,11 @@ def cm_all(run_type, level, thr_img, thr_prob, thr_pos, pro_data_dir, save_dir, 
                 pred = 0
             y_pred.append(pred)
         y_pred = np.asarray(y_pred)
+        df_mean['y_pred_class'] = y_pred
+        df_mean['label'] = df_mean['label'].astype(int)
+        df_mean['y_pred'] = df_mean['y_pred'].round(2)
+        df = df_mean[['ID', 'label', 'y_pred', 'y_pred_class']]
+        df.to_csv(os.path.join(pro_data_dir, 'pat_pred.csv'), index=False)
         print_info = 'cm patient prob:'
 
     elif level == 'patient_mean_pos':

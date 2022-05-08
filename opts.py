@@ -38,10 +38,10 @@ def parse_opts():
     parser.add_argument('--thr_pos', default=0.5, type=float, help='threshold to decide class on patient level')
     parser.add_argument('--n_bootstrap', default=500, type=int, help='n times of bootstrap to calcualte 95% CI')
     parser.add_argument('--_load_model', default='load_weights', type=str, help='load_model|load_weights')
-    parser.add_argument('--saved_model', default='simple_cnn-20-0.91.h5', type=str, help='saved model name')
+    parser.add_argument('--saved_model', default='BRAF_fusion_simple_cnn_98_0.82.h5', type=str, help='saved model name')
 
     # fine tune model
-    parser.add_argument('--trained_weights', default='simple_cnn-16-0.88.h5', type=str, help='weights fine tuning')
+    parser.add_argument('--trained_weights', default='PFS_2yr_simple_cnn_51_0.62.h5', type=str, help='weights fine tuning')
     parser.add_argument('--freeze_layer', default=12, type=str, help='Freeze layer to train')
     parser.add_argument('--tune_step', default='pre_train', type=str, help='pre_train|fine_tune')
 

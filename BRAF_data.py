@@ -18,36 +18,17 @@ def pat_data(task, curation_dir):
     labels = []
     img_dirs = []
     print('task:', task)
-    if task == 'BRAF_status':
-        df = df[~df['BRAF-Status'].isin(['In Review'])]
-        for braf in df['BRAF-Status']:
-            if braf == 'No BRAF mutation':
-                label = 0
-                #print(braf)
-            else:
-                label = 1
-                #print(braf)
-            labels.append(label)
-    elif task == 'BRAF_fusion':
-        df = df[~df['BRAF-Status'].isin(['In Review'])]
-        for braf in df['BRAF-Status']:
-            if braf in ['No BRAF mutation', 'V600E', 'p.V600E', 'LGG, BRAF V600E']:
-                label = 0
-            else:
-                label = 1
-            labels.append(label)
-    elif task == 'PFS_3yr':
-        df.dropna(subset=['3yr_event'], inplace=True)
-        labels = df['3yr_event'].to_list()
-    elif task == 'PFS_2yr':
-        df1 = pd.read_csv(os.path.join(curation_dir, 'master_csv.csv'))
-        df = df.merge(df1, on='Subject_ID', how='left')
-        df.dropna(subset=['2yr_event'], inplace=True)
-        #df = df[~df['Extent of Tumor Resection'].isin(['Partial resection', 'Gross/Near total resection'])]
-        labels = df['2yr_event'].to_list()
-    df['label'] = labels
-
     # train test split
+    df = df[~df['BRAF-Status'].isin(['In Review'])]
+    for braf in df['BRAF-Status']:
+        if braf in ['No BRAF mutation', 'V600E', 'p.V600E', 'LGG, BRAF V600E']:
+            label = 0
+        elif braf in ['V600E', 'p.V600E', 'LGG, BRAF V600E']:
+            label = 1
+        else:
+            label = 2
+        labels.append(label)
+    df['label'] = labels
     df_train, df_test = train_test_split(
         df, 
         test_size=0.2, 
@@ -64,7 +45,16 @@ def pat_data(task, curation_dir):
     print('train:', df_train['label'].value_counts())
     print('val:', df_val['label'].value_counts())
     print('test:', df_test['label'].value_counts())
-    
+    if task == 'BRAF_status':
+        for df in [df_train, df_val, df_test]:
+            df['label'].replace([1], 2)
+    if task == 'BRAF_fusion':
+        for df in [df_train, df_val, df_test]:
+            df['label'].replace([0], 1)
+            df['label'].replace([1], 2)
+    print('train:', df_train['label'].value_counts())
+    print('val:', df_val['label'].value_counts())
+    print('test:', df_test['label'].value_counts())
     return df_train, df_val, df_test
 
 
@@ -165,19 +155,19 @@ def get_img_dataset(task, pro_data_dir, df_train, df_val, df_test, channel, save
     if task == 'BRAF_status':
         fns_arr_1ch = ['train_arr_1ch.npy', 'val_arr_1ch.npy', 'test_arr_1ch.npy']
         fns_arr_3ch = ['train_arr_3ch.npy', 'val_arr_3ch.npy', 'test_arr_3ch.npy']
-        fns_df = ['train_img_df.csv', 'val_img_df.csv', 'test_img_df.csv']
+        fns_df = ['train_BRAF_df.csv', 'val_BRAF_df.csv', 'test_BRAF_df.csv']
     elif task == 'BRAF_fusion':
         fns_arr_1ch = ['train_arr_1ch_.npy', 'val_arr_1ch_.npy', 'test_arr_1ch_.npy']
         fns_arr_3ch = ['train_arr_3ch_.npy', 'val_arr_3ch_.npy', 'test_arr_3ch_.npy']
-        fns_df = ['train_img_df_.csv', 'val_img_df_.csv', 'test_img_df_.csv']
-    elif task == 'PFS_3yr':
-        fns_arr_1ch = ['train_1ch_3yr.npy', 'val_1ch_3yr.npy', 'test_1ch_3yr.npy']
-        fns_arr_3ch = ['train_3ch_3yr.npy', 'val_3ch_3yr.npy', 'test_3ch_3yr.npy']
-        fns_df = ['train_df_3yr.csv', 'val_df_3yr.csv', 'test_df_3yr.csv']
-    elif task == 'PFS_2yr':
-        fns_arr_1ch = ['train_1ch_2yr.npy', 'val_1ch_2yr.npy', 'test_1ch_2yr.npy']
-        fns_arr_3ch = ['train_3ch_2yr.npy', 'val_3ch_2yr.npy', 'test_3ch_2yr.npy']
-        fns_df = ['train_df_2yr.csv', 'val_df_2yr.csv', 'test_df_2yr.csv']
+        fns_df = ['train_fusion_df_.csv', 'val_fusion_df_.csv', 'test_fusion_df_.csv']
+#    elif task == 'PFS_3yr':
+#        fns_arr_1ch = ['train_1ch_3yr.npy', 'val_1ch_3yr.npy', 'test_1ch_3yr.npy']
+#        fns_arr_3ch = ['train_3ch_3yr.npy', 'val_3ch_3yr.npy', 'test_3ch_3yr.npy']
+#        fns_df = ['train_df_3yr.csv', 'val_df_3yr.csv', 'test_df_3yr.csv']
+#    elif task == 'PFS_2yr':
+#        fns_arr_1ch = ['train_1ch_2yr.npy', 'val_1ch_2yr.npy', 'test_1ch_2yr.npy']
+#        fns_arr_3ch = ['train_3ch_2yr.npy', 'val_3ch_2yr.npy', 'test_3ch_2yr.npy']
+#        fns_df = ['train_df_2yr.csv', 'val_df_2yr.csv', 'test_df_2yr.csv']
     for df, fn_arr_1ch, fn_arr_3ch, fn_df in zip(dfs, fns_arr_1ch, fns_arr_3ch, fns_df):
         img_data(
             pro_data_dir=pro_data_dir,

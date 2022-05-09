@@ -33,7 +33,8 @@ def train_generator(task, pro_data_dir, batch_size, channel):
         elif channel == 3:
             fn = 'train_arr_3ch.npy'
         x_train = np.load(os.path.join(pro_data_dir, fn))
-        train_df = pd.read_csv(os.path.join(pro_data_dir, 'train_img_df.csv'))
+        #train_df = pd.read_csv(os.path.join(pro_data_dir, 'train_img_df.csv'))
+        train_df = pd.read_csv(os.path.join(pro_data_dir, 'train_BRAF_df.csv'))
         y_train = np.asarray(train_df['label']).astype('int').reshape((-1, 1))
     if task == 'BRAF_fusion':
         if channel == 1:
@@ -41,7 +42,7 @@ def train_generator(task, pro_data_dir, batch_size, channel):
         elif channel == 3:
             fn = 'train_arr_3ch_.npy'
         x_train = np.load(os.path.join(pro_data_dir, fn))
-        train_df = pd.read_csv(os.path.join(pro_data_dir, 'train_img_df_.csv'))
+        train_df = pd.read_csv(os.path.join(pro_data_dir, 'train_fusion_df.csv'))
         y_train = np.asarray(train_df['label']).astype('int').reshape((-1, 1))
     elif task == 'tumor':
         if channel == 1:
@@ -128,7 +129,7 @@ def val_generator(task, pro_data_dir, batch_size, channel):
         elif channel == 3:
             fn = 'val_arr_3ch.npy'
         x_val = np.load(os.path.join(pro_data_dir, fn))
-        val_df = pd.read_csv(os.path.join(pro_data_dir, 'val_img_df.csv'))
+        val_df = pd.read_csv(os.path.join(pro_data_dir, 'val_BRAF_df.csv'))
         y_val = np.asarray(val_df['label']).astype('int').reshape((-1, 1))
     if task == 'BRAF_fusion':
         if channel == 1:
@@ -136,7 +137,7 @@ def val_generator(task, pro_data_dir, batch_size, channel):
         elif channel == 3:
             fn = 'val_arr_3ch_.npy'
         x_val = np.load(os.path.join(pro_data_dir, fn))
-        val_df = pd.read_csv(os.path.join(pro_data_dir, 'val_img_df_.csv'))
+        val_df = pd.read_csv(os.path.join(pro_data_dir, 'val_fusion_df.csv'))
         y_val = np.asarray(val_df['label']).astype('int').reshape((-1, 1))
     elif task == 'tumor':
         if channel == 1:

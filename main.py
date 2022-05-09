@@ -57,8 +57,8 @@ def main(opt):
             channel=opt.channel)
 
     # get CNN model
-    cnns = ['ResNet50', 'EfficientNetB4', 'MobileNet', 
-            'DenseNet121', 'IncepttionV3', 'VGG16']
+    #cnns = ['ResNet50', 'EfficientNetB4', 'MobileNet', 
+    #        'DenseNet121', 'IncepttionV3', 'VGG16']
     cnns = ['simple_cnn']
     for opt.cnn_model in cnns:
         if opt.transfer_learning:

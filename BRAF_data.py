@@ -21,7 +21,7 @@ def pat_data(task, curation_dir):
     # train test split
     df = df[~df['BRAF-Status'].isin(['In Review'])]
     for braf in df['BRAF-Status']:
-        if braf in ['No BRAF mutation', 'V600E', 'p.V600E', 'LGG, BRAF V600E']:
+        if braf in ['No BRAF mutation']:
             label = 0
         elif braf in ['V600E', 'p.V600E', 'LGG, BRAF V600E']:
             label = 1
@@ -47,14 +47,15 @@ def pat_data(task, curation_dir):
     print('test:', df_test['label'].value_counts())
     if task == 'BRAF_status':
         for df in [df_train, df_val, df_test]:
-            df['label'].replace([1], 2)
+            df['label'].replace(to_replace=2, value=1, inplace=True)
     if task == 'BRAF_fusion':
         for df in [df_train, df_val, df_test]:
-            df['label'].replace([0], 1)
-            df['label'].replace([1], 2)
+            df['label'].replace(to_replace=1, value=0, inplace=True)
+            df['label'].replace(to_replace=2, value=1, inplace=True)
     print('train:', df_train['label'].value_counts())
     print('val:', df_val['label'].value_counts())
     print('test:', df_test['label'].value_counts())
+    print('test:', df_test['Subject_ID'])
     return df_train, df_val, df_test
 
 
@@ -159,7 +160,7 @@ def get_img_dataset(task, pro_data_dir, df_train, df_val, df_test, channel, save
     elif task == 'BRAF_fusion':
         fns_arr_1ch = ['train_arr_1ch_.npy', 'val_arr_1ch_.npy', 'test_arr_1ch_.npy']
         fns_arr_3ch = ['train_arr_3ch_.npy', 'val_arr_3ch_.npy', 'test_arr_3ch_.npy']
-        fns_df = ['train_fusion_df_.csv', 'val_fusion_df_.csv', 'test_fusion_df_.csv']
+        fns_df = ['train_fusion_df.csv', 'val_fusion_df.csv', 'test_fusion_df.csv']
 #    elif task == 'PFS_3yr':
 #        fns_arr_1ch = ['train_1ch_3yr.npy', 'val_1ch_3yr.npy', 'test_1ch_3yr.npy']
 #        fns_arr_3ch = ['train_3ch_3yr.npy', 'val_3ch_3yr.npy', 'test_3ch_3yr.npy']

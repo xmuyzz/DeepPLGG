@@ -67,7 +67,7 @@ def get_stats_plots(task, channel, pro_data_dir, root_dir, run_type, run_model, 
                 fn_data = 'test_arr_3ch.npy'
             elif channel == 3:
                 fn_data = 'test_arr_3ch.npy'
-            fn_pred = 'test_img_pred.csv'
+            fn_pred = 'test_BRAF_pred.csv'
             save_dir = test_dir
     if task == 'BRAF_fusion':
         if run_type == 'val':
@@ -82,7 +82,7 @@ def get_stats_plots(task, channel, pro_data_dir, root_dir, run_type, run_model, 
                 fn_data = 'test_arr_3ch_.npy'
             elif channel == 3:
                 fn_data = 'test_arr_3ch_.npy'
-            fn_pred = 'test_img_pred_.csv'
+            fn_pred = 'test_fusion_pred.csv'
             save_dir = test_dir
     if task == 'tumor':
         if run_type == 'val':

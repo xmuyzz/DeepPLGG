@@ -22,14 +22,14 @@ def parse_opts():
     parser.set_defaults(save_nii=False)
     
     # train model
-    parser.add_argument('--task', default='PFS_2yr', type=str, help='BRAF_status|BRAF_fusion|tumor')
+    parser.add_argument('--task', default='BRAF_status', type=str, help='BRAF_status|BRAF_fusion|tumor')
     parser.add_argument('--run_type', default='test', type=str, help='train|val|test')
     parser.add_argument('--batch_size', default=32, type=int, help='Batch size')
     parser.add_argument('--lr', default=1e-3, type=float, help='learning rate')
     parser.add_argument('--epoch', default=50, type=int, help='Epoch')
     parser.add_argument('--activation', default='sigmoid', type=str, help='Activation function on last layer')
     parser.add_argument('--loss_function',  default='binary_crossentropy', type=str, help='loss function')
-    parser.add_argument('--cnn_model', default='simple_cnn', type=str, help='cnn model')
+    parser.add_argument('--cnn_model', default='ResNet50', type=str, help='cnn model')
     parser.add_argument('--input_shape', default=(192, 192, 3), type=int, help='Input shape')
     
     # test model   

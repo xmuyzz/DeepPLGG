@@ -52,8 +52,8 @@ def test(task, model, run_type, channel, model_dir, pro_data_dir, saved_model, l
                 fn_data = 'test_arr_3ch.npy'
             elif channel == 3:
                 fn_data = 'test_arr_3ch.npy'
-            fn_label = 'test_img_df.csv'
-            fn_pred = 'test_img_pred.csv' 
+            fn_label = 'test_BRAF_df.csv'
+            fn_pred = 'test_BRAF_pred.csv' 
     if task == 'BRAF_fusion':
         if run_type == 'val':
             if channel == 1:
@@ -67,8 +67,8 @@ def test(task, model, run_type, channel, model_dir, pro_data_dir, saved_model, l
                 fn_data = 'test_arr_3ch_.npy'
             elif channel == 3:
                 fn_data = 'test_arr_3ch_.npy'
-            fn_label = 'test_img_df_.csv'
-            fn_pred = 'test_img_pred_.csv'
+            fn_label = 'test_fusion_df.csv'
+            fn_pred = 'test_fusion_pred.csv'
     if task == 'tumor':
         if run_type == 'val':
             if channel == 1:

@@ -80,10 +80,12 @@ def main(proj_dir, threshold, n_clusters):
     PFS1 = 1 - df1.loc[df['2yr_event'] == 1].shape[0]/df1.shape[0]
     PFS1 = round(PFS1, 3)
     print('PFS1:', PFS1)
+    print('group 1:', df1.shape[0])
     df0 = df.loc[df['group'] == 0]
     PFS0 = 1 - df0.loc[df['2yr_event'] == 1].shape[0]/df0.shape[0]
     FPS0 = round(PFS0, 3)
     print('PFS0:', PFS0)
+    print('group 0:', df0.shape[0])
     dfs = [df0, df1]
     
 #    dfs = []
@@ -119,16 +121,16 @@ def main(proj_dir, threshold, n_clusters):
     
     plt.xlabel('Time (days)', fontweight='bold', fontsize=12)
     plt.ylabel('Survival probability', fontweight='bold', fontsize=12)
-    plt.xlim([0, 2000])
+    plt.xlim([0, 1000])
     plt.ylim([0, 1])
     #ax.patch.set_facecolor('gray')
     ax.axhline(y=0, color='k', linewidth=2)
     ax.axhline(y=1, color='k', linewidth=2)
     ax.axvline(x=0, color='k', linewidth=2)
     ax.axvline(x=5000, color='k', linewidth=2)
-    plt.xticks([0, 500, 1000, 1500, 2000], fontsize=12, fontweight='bold')
+    plt.xticks([0, 200, 400, 600, 800, 1000], fontsize=12, fontweight='bold')
     plt.yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=12, fontweight='bold')
-    plt.legend(loc='upper right', prop={'size': 12, 'weight': 'bold'})
+    plt.legend(loc='lower left', prop={'size': 12, 'weight': 'bold'})
     #plt.legend(bbox_to_anchor=(0,1.02,1,0.2), loc='lower left', mode="expand", 
     #           borderaxespad=0, ncol=3, prop={'size': 12, 'weight': 'bold'})
     plt.grid(True)

@@ -44,6 +44,11 @@ def pat_data(task, curation_dir):
         df = df.merge(df1, on='Subject_ID', how='left')
         df.dropna(subset=['2yr_event'], inplace=True)
         #df = df[~df['Extent of Tumor Resection'].isin(['Partial resection', 'Gross/Near total resection'])]
+        IDs = []
+        for ID, FU, event in zip(df['Subject_ID'], df['FU'], df['2yr_event']):
+            if FU < 730 and event == 0:
+                IDs.append(ID)
+        df = df[~df['Subject_ID'].isin(IDs)]
         labels = df['2yr_event'].to_list()
     df['label'] = labels
 

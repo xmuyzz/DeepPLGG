@@ -4,7 +4,6 @@ import pandas as pd
 
 
 
-
 def MRI_curation(data_dir, proj_dir):
 
     """ MRI data curation

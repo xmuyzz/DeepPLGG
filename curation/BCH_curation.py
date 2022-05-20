@@ -6,6 +6,8 @@ import shutil
 import glob
 import dicom2nifti
 from glob import iglob
+from pathlib import Path
+import dicom2nifti.settings as settings
 
 
 
@@ -32,27 +34,39 @@ def main(data_dir, curation_dir, rename, unzip, rename_folder, get_nii):
             print(fn)
         level2 = iglob(os.path.join(curation_dir, '*/*/*'))
         l2_dirs = [x for x in level2 if os.path.isdir(x)]
-        for fn in l2_dirs:
-            os.rename(fn, fn.replace(' ', '_'))
-            #print(fn)
-
+        for path in l2_dirs:
+            os.rename(path, path.replace(' ', '_'))
+            print(path)
+    
     if get_nii:
-        for subdir, dirs, files in os.walk(curation_dir):
-            #print('subdir:', subdir)
-            #print('dirs:', dirs)
-            print(files)            
-#            dicom2nifti.convert_directory(
-#                dicom_directory, 
-#                output_folder, 
-#                compression=True, 
-#                reorient=True)
+        # Inconsistent slice incremement
+        settings.disable_validate_slice_increment()
+        settings.enable_resampling()
+        settings.set_resample_spline_interpolation_order(1)
+        settings.set_resample_padding(-1000)
+        # single slice
+        settings.disable_validate_slicecount()
+        
+        level2 = iglob(os.path.join(curation_dir, '*/*'))
+        l2_dirs = [x for x in level2 if os.path.isdir(x)]
+        for path in l2_dirs:
+            print(path)
+            path = Path(path)
+            level_up = 1
+            save_dir = path.parents[level_up - 1]
+            print(save_dir)
+            dicom2nifti.convert_directory(
+                dicom_directory=path, 
+                output_folder=save_dir, 
+                compression=True, 
+                reorient=True)
 
 
 
 if __name__ == '__main__':
 
     data_dir = '/mnt/aertslab/USERS/Zezhong/pLGG/BCH/data/zip_data'
-    curation_dir = '/mnt/aertslab/USERS/Zezhong/pLGG/BCH/BCH_curated'
+    curation_dir = '/mnt/aertslab/USERS/Zezhong/pLGG/BCH/BCH_curated/Girard_Michael_A_4228140'
 
     rename = False
     unzip = False

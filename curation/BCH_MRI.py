@@ -18,7 +18,8 @@ def main(curation_dir):
     l2_dirs = [x for x in level2]
     count = 0
     for path in l2_dirs:
-        pat_id = path.split('/')[-2].split('_')[-1].strip()
+        pat_id = path.split('/')[-2].split('_')[-1]
+        pat_id = path.split('/')[-2]
         if path.split('.')[-1] == 'gz':
             a = path.split('/')[-1].split('.')[0].split('_')
             #print('a:', a)
@@ -29,6 +30,7 @@ def main(curation_dir):
                     img = nib.load(path)
                     nib.save(img, fn_dir)
                     print(count)
+                    print(pat_id)
     print('T2W curation complete')
 
 

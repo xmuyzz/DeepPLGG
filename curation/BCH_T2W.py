@@ -12,7 +12,6 @@ import nibabel as nib
 
 
 def main(curation_dir, BCH_T2W_dir, pro_data_dir):
-
     
     level2 = iglob(os.path.join(curation_dir, '*/*'))
     l2_dirs = [x for x in level2]
@@ -32,9 +31,8 @@ def main(curation_dir, BCH_T2W_dir, pro_data_dir):
                     #fn_dir = BCH_T2W_dir + '/' + pat_id + '.nii.gz'
                     img = nib.load(path)
                     n_slice = img.shape[2]
-                    #nib.save(img, fn_dir)
-                    #print(count)
-                    #print(pat_id)
+                    print(count)
+                    print(pat_id)
                     img_dirs.append(path)
                     pat_ids.append(pat_id)
                     n_slices.append(n_slice)
@@ -43,7 +41,7 @@ def main(curation_dir, BCH_T2W_dir, pro_data_dir):
     #print(df)
     #df = df.sort_values('n_slice', ascending=False).drop_duplicates(['pat_id'])
     df = df.loc[df.groupby(['pat_id'])['n_slice'].idxmax()].reset_index()
-    print(df)
+    #print(df)
     
     # save nii data
     for pat_id, img_dir in zip(df['pat_id'], df['img_dir']):
@@ -53,13 +51,15 @@ def main(curation_dir, BCH_T2W_dir, pro_data_dir):
     print('save T2W complete!')
 
     img_dirs = [i for i in sorted(glob.glob(BCH_T2W_dir + '/*.nii.gz'))]
-    print(img_dirs)
+    #print(img_dirs)
     df['img_dir'] = img_dirs
     df.columns = ['index', 'bch_mrn', 'img_dir', 'n_slice']
-    meta = pd.read_csv(os.path.join(pro_data_dir, 'BCH_clinical_meta.csv', on_bad_lines='skip'))
+    meta = pd.read_csv(os.path.join(pro_data_dir, 'BCH_clinical_meta.csv'), on_bad_lines='skip')
+    meta['bch_mrn'] = meta['bch_mrn'].astype('float64')
+    df['bch_mrn'] = df['bch_mrn'].astype('float64')
     df = df.merge(meta, how='left', on='bch_mrn')
-    print(df)
-    df.to_csv(os.path.join(pro_data_dir, 'BCH_master.csv'))
+    #print(df)
+    df.to_csv(os.path.join(pro_data_dir, 'BCH_master.csv'), index=False)
 
 
 

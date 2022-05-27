@@ -79,4 +79,3 @@ if __name__ == '__main__':
     main(curation_dir, BCH_T2W_dir, pro_data_dir)
 
 
-

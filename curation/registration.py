@@ -5,21 +5,20 @@ import SimpleITK as sitk
 import pydicom
 import numpy as np
 import pandas as pd
+from HD-BET.HD_BET import hd-bet
 
 
 
-def main(pro_data_dir, output_dir, temp_img, save_tfm=False):
+def registration(pro_data_dir, output_dir, temp_img, save_tfm=False):
 
     """
-    Registers two CTs together
+    MRI registration with SimpleITK
     Args:
-        dataset (str): Name of dataset.
-        patient_id (str): Unique patient id.
-        data_type (str): Type of data (e.g., ct, pet, mri..)
-        input_dir (str): Path to folder initial nrrd image files
-        output_dir (str): Path to folder where the registered nrrds will be saved.
+        pro_data_dir {path} -- Name of dataset
+        temp_img {str} -- registration image template
+        output_dir {path} -- Path to folder where the registered nrrds will be saved.
     Returns:
-        The sitk image object.
+        The sitk image object -- nii.gz
     Raises:
         Exception if an error occurs.
     """
@@ -74,6 +73,48 @@ def main(pro_data_dir, output_dir, temp_img, save_tfm=False):
             print('problematic data:', count, pat_id)
 
 
+def correction(input_dir, output_dir):
+
+    """
+    Bias field correction with SimpleITK
+    Args:
+        input_dir {path} -- input directory
+        output_dir {path} -- output directory
+    Returns:
+        Images in nii.gz format
+    """
+
+    for img_dir in sorted(glob.glob(brain_dir + '/*.nii.gz')):
+        ID = img_dir.split('/')[-1].split('.')[0]
+        if ID[-1] == 'k':
+            continue
+        else:
+            print(ID)
+            img = sitk.ReadImage(img_dir, sitk.sitkFloat32)
+            img = sitk.N4BiasFieldCorrection(img)
+            ID = img_dir.split('/')[-1].split('.')[0]
+            fn = ID + '_corrected.nii.gz'
+            sitk.WriteImage(img, os.path.join(correction_dir, fn))
+    print('bias field correction complete!')
+
+
+def brain_extraction(i, o, device, mode, tta):
+    
+    """
+    brain extraction - skull stripping with HD-BET
+    works for T2W, pre-T1W, post-T2W, FLAIR
+    Args:
+        input {path} -- input files or folders
+        output {path} -- output files or folders
+        mode {str} -- (fast | accurate)
+        tta {int} -- (0 | 1)
+    Returns:
+        img in nii.gz format
+    """
+
+    hd-bet(i=input_dir, o=output_dir, device='cpu', mode='fast', tta=0)
+
+
 
 if __name__ == '__main__':
     
@@ -84,7 +125,7 @@ if __name__ == '__main__':
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
-    main(pro_data_dir, output_dir, temp_img)
+    registration(pro_data_dir, output_dir, temp_img)
 
 
 

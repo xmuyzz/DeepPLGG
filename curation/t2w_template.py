@@ -39,7 +39,7 @@ def t2w_template(pro_data_dir, interp_type='linear', brain_extraction=False):
     old_size = arr.shape
     #print(new_size)
     old_spacing = img.GetSpacing()
-    new_spacing = (1, 1, 3)
+    new_spacing = (1, 1, 1)
     #new_size = [old_size[0], old_size[1], int(round((old_size[2] * 1) / float(z_spacing)))]
     new_size = [
         int(round((old_size[0] * old_spacing[0]) / float(new_spacing[0]))),

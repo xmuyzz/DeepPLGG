@@ -63,22 +63,29 @@ def registration(pro_data_dir, input_dir, output_dir, temp_img, interp_type='lin
     """
     
     # Actually read the data based on the user's selection.
-    fixed_img = sitk.ReadImage(os.path.join(pro_data_dir, temp_img), sitk.sitkFloat32)
-    #df = pd.read_csv(os.path.join(pro_data_dir, 'BCH_master.csv'))
+    fixed_img = sitk.ReadImage(os.path.join(temp_dir, temp_img), sitk.sitkFloat32)
+    IDs = []
+    for img_dir in sorted(glob.glob(T2W_dir + '/*.nii.gz')):
+        ID = img_dir.split('/')[-1].split('.')[0]
+        try:
+            moving_img = sitk.ReadImage(img_dir, sitk.sitkFloat32)
+        except Exception as e:
+            IDs.append(ID)
+    print(IDs)
     count = 0
     for img_dir in sorted(glob.glob(input_dir + '/*.nii.gz')):
         ID = img_dir.split('/')[-1].split('.')[0]
-        if ID[-1] == 'k':
-            continue
+        if ID in IDs:
+            print('problematic data!')
         else:
             count += 1
             print(count)
             print(ID)
-            moving_img = sitk.ReadImage(img_dir, sitk.sitkFloat32)
-            # bias filed correction
-            moving_img = sitk.N4BiasFieldCorrection(moving_img)
-            pat_id = img_dir.split('/')[-1].split('.')[0]
             try:
+                moving_img = sitk.ReadImage(img_dir, sitk.sitkFloat32)
+                # bias filed correction
+                moving_img = sitk.N4BiasFieldCorrection(moving_img)
+                pat_id = img_dir.split('/')[-1].split('.')[0]
                 #print('moving image:', moving_image.shape)
                 # respace fixed img on z-direction
                 z_spacing = moving_img.GetSpacing()[2]
@@ -140,41 +147,39 @@ def registration(pro_data_dir, input_dir, output_dir, temp_img, interp_type='lin
                     0.0, 
                     moving_img.GetPixelID())
                 sitk.WriteImage(
-                    moving_img_resampled, os.path.join(output_dir, str(int(pat_id)) + '_registered.nii.gz'))
+                    moving_img_resampled, os.path.join(output_dir, str(int(pat_id)) + '_reg.nii.gz'))
                 if save_tfm:
                     sitk.WriteTransform(final_transform, os.path.join(output_dir, str(int(pat_id)) + '_T2.tfm'))
-            except:
-                print('problematic data:', count, pat_id)
+            except Exception as e:
+                print(e)
 
 
 
 if __name__ == '__main__':
     
-    temp_img = 'T2W_brain_template.nii.gz'
+    temp_img = 'temp_head.nii.gz'
     proj_dir = '/mnt/aertslab/USERS/Zezhong/pLGG'
     T2W_dir = os.path.join(proj_dir, 'BCH_T2W')
-    reg_dir = os.path.join(proj_dir, 'BCH_T2W_reg')
+    reg_dir = os.path.join(proj_dir, 'BCH_T2W_reg2')
     brain_dir = os.path.join(proj_dir, 'BCH_T2W_brain')
     correction_dir = os.path.join(proj_dir, 'BCH_T2W_correction')
     pro_data_dir = os.path.join(proj_dir, 'pro_data')
-    
+    temp_dir = os.path.join(proj_dir, 'reg_temp') 
+
     register = True
     extraction = False
-    correction = False
+
 
     if register:
         registration(
             pro_data_dir=pro_data_dir, 
-            input_dir=brain_dir, 
+            input_dir=T2W_dir, 
             output_dir=reg_dir, 
             temp_img=temp_img)
 
     if extraction:
         brain_extraction(T2W_dir=T2W_dir, brain_dir=brain_dir)
     
-    if correction:
-        bf_correction(inputs=brain_dir, outputs=correction_dir)
-
 
 
 

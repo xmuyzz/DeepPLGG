@@ -34,7 +34,7 @@ def bf_correction(input_dir, output_dir):
     print('bias field correction complete!')
 
 
-def brain_extraction(T2W_dir, brain_dir):
+def brain_extraction(input_dir, output_dir):
     """
     Brain extraction using HDBET package (UNet based DL method)
     Args:
@@ -178,7 +178,7 @@ if __name__ == '__main__':
             temp_img=temp_img)
 
     if extraction:
-        brain_extraction(T2W_dir=T2W_dir, brain_dir=brain_dir)
+        brain_extraction(T2W_dir=input_dir, brain_dir=output_dir)
     
 
 

@@ -5,8 +5,10 @@ import SimpleITK as sitk
 import pydicom
 import numpy as np
 import pandas as pd
+import itk
+import nibabel as nib
 from HDBET.HD_BET.hd_bet import hd_bet
-
+from tqdm import tqdm
 
 
 def bf_correction(input_dir, output_dir):
@@ -44,11 +46,13 @@ def brain_extraction(input_dir, output_dir):
         Brain images
     """
 
-    hd_bet(inputs=reg_dir, outputs=brain_dir, device='cpu', mode='fast', tta=0)
+    hd_bet(inputs=input_dir, outputs=output_dir, device='cpu', mode='fast', tta=0)
     print('brain extraction complete!')
 
 
-def registration(pro_data_dir, input_dir, output_dir, temp_img, interp_type='linear', save_tfm=False):
+
+def registration(cohort, pro_data_dir, input_dir, output_dir, temp_img, run_list, 
+                 interp_type='linear', save_tfm=False):
 
     """
     MRI registration with SimpleITK
@@ -63,6 +67,7 @@ def registration(pro_data_dir, input_dir, output_dir, temp_img, interp_type='lin
     """
     
     # Actually read the data based on the user's selection.
+    #fixed_image = itk.imread(os.path.join(temp_dir, temp_img), itk.F)
     fixed_img = sitk.ReadImage(os.path.join(temp_dir, temp_img), sitk.sitkFloat32)
     IDs = []
     for img_dir in sorted(glob.glob(T2W_dir + '/*.nii.gz')):
@@ -71,21 +76,26 @@ def registration(pro_data_dir, input_dir, output_dir, temp_img, interp_type='lin
             moving_img = sitk.ReadImage(img_dir, sitk.sitkFloat32)
         except Exception as e:
             IDs.append(ID)
-    print(IDs)
+    print('problematic data:', IDs)
     count = 0
-    for img_dir in sorted(glob.glob(input_dir + '/*.nii.gz')):
+    for img_dir in tqdm(sorted(glob.glob(input_dir + '/*.nii.gz'))):
         ID = img_dir.split('/')[-1].split('.')[0]
         if ID in IDs:
             print('problematic data!')
         else:
-            count += 1
-            print(count)
-            print(ID)
-            try:
+            if 'T2W' in ID:
+                count += 1
+                print(count)
+                #print(ID)
+                #try:
                 moving_img = sitk.ReadImage(img_dir, sitk.sitkFloat32)
                 # bias filed correction
                 moving_img = sitk.N4BiasFieldCorrection(moving_img)
-                pat_id = img_dir.split('/')[-1].split('.')[0]
+                if cohort == 'BCH':
+                    pat_id = img_dir.split('/')[-1].split('.')[0]
+                elif cohort == 'CBTN':
+                    pat_id = img_dir.split('/')[-1].split('.')[0].split('_')[0][1:]
+                print(pat_id)
                 #print('moving image:', moving_image.shape)
                 # respace fixed img on z-direction
                 z_spacing = moving_img.GetSpacing()[2]
@@ -136,9 +146,7 @@ def registration(pro_data_dir, input_dir, output_dir, temp_img, interp_type='lin
                 registration_method.SetSmoothingSigmasPerLevel(smoothingSigmas=[2, 1, 0])
                 registration_method.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
                 registration_method.SetInitialTransform(transform)
-                final_transform = registration_method.Execute(
-                    fixed_img, 
-                    moving_img)                               
+                final_transform = registration_method.Execute(fixed_img, moving_img)                               
                 moving_img_resampled = sitk.Resample(
                     moving_img, 
                     fixed_img, 
@@ -150,35 +158,86 @@ def registration(pro_data_dir, input_dir, output_dir, temp_img, interp_type='lin
                     moving_img_resampled, os.path.join(output_dir, str(int(pat_id)) + '_reg.nii.gz'))
                 if save_tfm:
                     sitk.WriteTransform(final_transform, os.path.join(output_dir, str(int(pat_id)) + '_T2.tfm'))
-            except Exception as e:
-                print(e)
+                #except Exception as e:
+                #    print(e)
 
+
+def registration_elastix(input_image_path, output_path, fixed_image_path):
+    
+    """
+    Registration with ITK-Elastix
+    https://github.com/InsightSoftwareConsortium/ITKElastix
+    """
+
+    fixed_image = itk.imread(fixed_image_path, itk.F)
+    # Import Parameter Map
+    parameter_object = itk.ParameterObject.New()
+    parameter_object.AddParameterFile(proj_dir + '/reg_parameters/Parameters_Rigid.txt')
+    for img_dir in tqdm(sorted(glob.glob(input_dir + '/*.nii.gz'))):
+        ID = img_dir.split('/')[-1].split('.')[0]
+        if 'T2W' in ID:
+            count += 1
+            print(count)
+            #print(ID)
+            #try:
+            moving_img = itk.imread(img_dir, sitk.sitkFloat32)
+            # bias filed correction
+            #moving_img = sitk.N4BiasFieldCorrection(moving_img)
+            if cohort == 'BCH':
+                pat_id = img_dir.split('/')[-1].split('.')[0]
+            elif cohort == 'CBTN':
+                pat_id = img_dir.split('/')[-1].split('.')[0].split('_')[0][1:]
+            print(pat_id)
+
+    if "nii" in input_image_path:
+        moving_image = itk.imread(input_image_path, itk.F)
+        # Call registration function
+        try:
+            result_image, result_transform_parameters = itk.elastix_registration_method(
+                fixed_image, moving_image,
+                parameter_object=parameter_object,
+                log_to_console=False)
+            image_id = input_image_path.split("/")[-1]
+            new_dir = output_path+image_id.split(".")[0]
+            if not os.path.exists(new_dir):
+                os.mkdir(new_dir)
+            itk.imwrite(result_image, new_dir+"/"+image_id)
+            print("Registered ", image_id)
+        except:
+            print("Cannot transform", input_image_path.split("/")[-1])
 
 
 if __name__ == '__main__':
     
     temp_img = 'temp_head.nii.gz'
-    proj_dir = '/mnt/aertslab/USERS/Zezhong/pLGG'
+    proj_dir = '/mnt/aertslab/USERS/Zezhong/pLGG/CBTN_BCH_Data'
     T2W_dir = os.path.join(proj_dir, 'BCH_T2W')
-    reg_dir = os.path.join(proj_dir, 'BCH_T2W_reg2')
-    brain_dir = os.path.join(proj_dir, 'BCH_T2W_brain')
+    reg_dir = os.path.join(proj_dir, 'BCH_T2W_reg3')
+    brain_dir = os.path.join(proj_dir, 'BCH_T2W_brain2')
     correction_dir = os.path.join(proj_dir, 'BCH_T2W_correction')
     pro_data_dir = os.path.join(proj_dir, 'pro_data')
     temp_dir = os.path.join(proj_dir, 'reg_temp') 
+    CBTN_T2W_dir = os.path.join(proj_dir, 'T2W')
+    CBTN_reg_dir = os.path.join(proj_dir, 'CBTN_T2W_reg')
+    CBTN_brain_dir = os.path.join(proj_dir, 'CBTN_T2W_brain')
 
+    run_list = ['1053918', '1136384', '2271088', '2293568', '2296306', '4040081', 
+                '4365249', '4514729', '4615639', '5048067']
     register = True
     extraction = False
 
 
     if register:
         registration(
+            cohort='CBTN',
             pro_data_dir=pro_data_dir, 
-            input_dir=T2W_dir, 
-            output_dir=reg_dir, 
-            temp_img=temp_img)
+            input_dir=CBTN_T2W_dir, 
+            output_dir=CBTN_reg_dir, 
+            temp_img=temp_img,
+            run_list=run_list)
 
     if extraction:
-        brain_extraction(T2W_dir=input_dir, brain_dir=output_dir)
+        brain_extraction(input_dir=reg_dir, output_dir=brain_dir)
     
 
 

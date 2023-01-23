@@ -20,6 +20,7 @@ for img_dir in sorted(glob.glob(T2W_dir + '/*.nii.gz')):
         print(count)
         print(ID)
     except Exception as e:
-        print(e, count, ID)
+        print(count, ID)
+        print(e)
         IDs.append(ID)
 print(IDs)

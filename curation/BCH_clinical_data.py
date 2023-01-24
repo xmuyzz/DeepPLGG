@@ -234,18 +234,18 @@ def BRAF_more():
                 braf = 0
                 brafs.append(braf)
     print(brafs)
-    df['BRAF Any'] = brafs
+    df['BRAF V600E Any'] = brafs
 
     # WHO LGG with BRAF status
     df2 = df[df['WHO Classification Grade'].isin(['I', 'II', 'I-II'])]
-    df2 = df2[df2['BRAF Any'].isin(['Positive', 'Negative'])]
+    df2 = df2[df2['BRAF V600E Any'].isin(['Positive', 'Negative'])]
     
     # WHO HGG with BRAF V600E
-    df3 = df[df['BRAF Any'].isin(['Positive'])]
+    df3 = df[df['BRAF V600E Any'].isin(['Positive'])]
     df3 = df3[~df3['WHO Classification Grade'].isin(['I', 'I-II', 'II'])]
 
     # with no BRAF V600E status but with BRAF fusion status 
-    df4 = df[df['BRAF Any']==0]
+    df4 = df[df['BRAF V600E Any']==0]
     print(df4)
     df4 = df4[df4['BRAF Fusion Status'].isin(['Positive', 'Negative'])]
     print(df4)

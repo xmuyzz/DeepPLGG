@@ -163,7 +163,6 @@ def BRAF_TOT():
         else:
             MRI = 'no'
         MRIs.append(MRI)
-
     MRNs = []
     for MRN in df1['BCH MRN'].to_list():
         if MRN not in df0['BCH MRN'].to_list():
@@ -192,7 +191,7 @@ def BRAF_TOT():
     df.to_csv(clinical_dir + '/BRAF_temp.csv', index=False)
 
     df = df[~df['MRI data'].isin(['yes', 'no'])]
-    df = df[df['OncoPanel'].isin(['Yes'])]
+    #df = df[df['OncoPanel'].isin(['Yes'])]
     df2 = df[df['WHO Classification Grade'].isin(['I', 'II', 'I-II'])]
     df2 = df2[df2['BRAF V600E Sequencing Status_x'].isin(['Positive', 'Positive (p.G596R)', 'Negative'])]
 
@@ -205,12 +204,63 @@ def BRAF_TOT():
     df.to_csv(clinical_dir + '/BRAF_more.csv', index=False)
 
 
+def BRAF_more():
+    """combine BRAF from redcap and pathology department
+    """
+    proj_dir = '/mnt/kannlab_rfa/Zezhong/pLGG/data'
+    clinical_dir = proj_dir + '/clinical_data'
+    # BRAF more
+    df0 = pd.read_csv(clinical_dir + '/CharacterizationOfCl_DATA_LABELS_2022-11-21_0829.csv')
+    redcap_list = df0['BCH MRN'].to_list()
+    # exclude patients from redcap database
+    df1 = pd.read_csv(clinical_dir + '/10_417_BRAF_Cases_for_Dr_Kann.csv', index_col=0)
+    df = df1[~df1['BCH MRN'].isin(redcap_list)]
+    df.to_csv(clinical_dir + '/BRAF_temp2.csv', index=False)
+    
+    # create BRAF any combining sequencing and IHC data
+    brafs = []
+    for ihc, seq in zip(df['BRAF V600E IHC Status'], df['BRAF V600E Sequencing Status']):
+        if seq == 'Positive' or seq == 'Positive (p.G596R)':
+            braf = 'Positive'
+            brafs.append(braf)
+        elif seq == 'Negative':
+            braf = 'Negative'
+            brafs.append(braf)
+        else:
+            if ihc == 'Positive' or ihc == 'Neagtive':
+                braf = ihc
+                brafs.append(braf)
+            else:
+                braf = 0
+                brafs.append(braf)
+    print(brafs)
+    df['BRAF Any'] = brafs
+
+    # WHO LGG with BRAF status
+    df2 = df[df['WHO Classification Grade'].isin(['I', 'II', 'I-II'])]
+    df2 = df2[df2['BRAF Any'].isin(['Positive', 'Negative'])]
+    
+    # WHO HGG with BRAF V600E
+    df3 = df[df['BRAF Any'].isin(['Positive'])]
+    df3 = df3[~df3['WHO Classification Grade'].isin(['I', 'I-II', 'II'])]
+
+    # with no BRAF V600E status but with BRAF fusion status 
+    df4 = df[df['BRAF Any']==0]
+    print(df4)
+    df4 = df4[df4['BRAF Fusion Status'].isin(['Positive', 'Negative'])]
+    print(df4)
+
+    df = pd.concat([df2, df3, df4])
+    #print(df)
+    df.to_csv(clinical_dir + '/BRAF_more2.csv', index=False)
+
+
 if __name__ == '__main__':
 
     #get_clinical()
     #get_dcm_header()
     #combine()
     #test()
-    BRAF_TOT()
+    BRAF_more()
 
 

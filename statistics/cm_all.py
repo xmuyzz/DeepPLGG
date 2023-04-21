@@ -15,12 +15,14 @@ from statistics.plot_cm import plot_cm
 
 
 
-def cm_all(run_type, level, thr_img, thr_prob, thr_pos, pro_data_dir, save_dir, fn_df_pred):
+def cm_all(cls_task, level, thr_img, thr_prob, thr_pos, save_dir, fn_df_pred):
     
-    df_sum = pd.read_csv(os.path.join(pro_data_dir, fn_df_pred))
+    df_sum = pd.read_csv(os.path.join(save_dir, fn_df_pred))
+    #print(df_sum)
 
     if level == 'img':
-        y_true = df_sum['label'].to_numpy()
+        #y_true = df_sum['label'].to_numpy()
+        y_true = df_sum[cls_task].to_numpy()
         preds = df_sum['y_pred'].to_numpy()
         y_pred = []
         for pred in preds:
@@ -34,7 +36,8 @@ def cm_all(run_type, level, thr_img, thr_prob, thr_pos, pro_data_dir, save_dir, 
 
     elif level == 'patient_mean_prob': 
         df_mean = df_sum.groupby(['ID']).mean().reset_index()
-        y_true = df_mean['label'].to_numpy()
+        #print(df_mean)
+        y_true = df_mean[cls_task].to_numpy()
         preds = df_mean['y_pred'].to_numpy()
         y_pred = []
         for pred in preds:
@@ -45,15 +48,16 @@ def cm_all(run_type, level, thr_img, thr_prob, thr_pos, pro_data_dir, save_dir, 
             y_pred.append(pred)
         y_pred = np.asarray(y_pred)
         df_mean['y_pred_class'] = y_pred
-        df_mean['label'] = df_mean['label'].astype(int)
+        df_mean[cls_task] = df_mean[cls_task].astype(int)
         df_mean['y_pred'] = df_mean['y_pred'].round(2)
-        df = df_mean[['ID', 'label', 'y_pred', 'y_pred_class']]
-        df.to_csv(os.path.join(pro_data_dir, 'pat_pred.csv'), index=False)
+        df = df_mean[['ID', cls_task, 'y_pred', 'y_pred_class']]
+        df_mean.to_csv(save_dir + '/pat_pred.csv', index=False)
         print_info = 'cm patient prob:'
 
     elif level == 'patient_mean_pos':
-        df_mean = df_sum.groupby(['ID']).mean()
-        y_true = df_mean['label'].to_numpy()
+        df_mean = df_sum.groupby(['ID']).mean().reset_index()
+        y_true = df_mean[cls_task].to_numpy()
+        #print('y true:', y_true)
         pos_rates = df_mean['y_pred_class'].to_list()
         y_pred = []
         for pos_rate in pos_rates:
@@ -65,7 +69,9 @@ def cm_all(run_type, level, thr_img, thr_prob, thr_pos, pro_data_dir, save_dir, 
         y_pred = np.asarray(y_pred)
         print_info = 'cm patient pos:'
 
-    ### using confusion matrix to calculate AUC
+    ### mask confusion matrix
+    #print('y true:', y_true)
+    #print('y pred:', y_true)
     cm = confusion_matrix(y_true, y_pred)
     cm_norm = cm.astype('float64') / cm.sum(axis=1)[:, np.newaxis]
     cm_norm = np.around(cm_norm, 2)
@@ -97,8 +103,7 @@ def cm_all(run_type, level, thr_img, thr_prob, thr_pos, pro_data_dir, save_dir, 
             cm0=cm0,
             cm_type=cm_type,
             level=level,
-            save_dir=save_dir
-            )
+            save_dir=save_dir)
 
     return cm, cm_norm, report
 

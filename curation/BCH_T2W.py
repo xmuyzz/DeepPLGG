@@ -16,10 +16,16 @@ def BCH_T2W(proj_dir, save_t2w):
     """
     get BCH T2W images with largest slice numbers
     """
-    curation_dir = proj_dir + '/BCH_raw/BCH_TOT'
+    #curation_dir = proj_dir + '/BCH_raw/BCH_TOT'
+    #clinical_dir = proj_dir + '/clinical_data'
+    #BCH_T2W_dir = proj_dir + '/BCH_raw/BCH_T2W_one'
+    #BCH_T2W_all_dir = proj_dir + '/BCH_raw/BCH_T2W_all'
+
+    curation_dir = proj_dir + '/BCH_raw/BCH_dcm_2023/TOT_dcm'
     clinical_dir = proj_dir + '/clinical_data'
-    BCH_T2W_dir = proj_dir + '/BCH_raw/BCH_T2W_one'
-    BCH_T2W_all_dir = proj_dir + '/BCH_raw/BCH_T2W_all'
+    BCH_T2W_dir = proj_dir + '/BCH_raw/BCH_dcm_2023/BCH_T2W_one'
+    BCH_T2W_all_dir = proj_dir + '/BCH_raw/BCH_dcm_2023/BCH_T2W_all'
+
     if not os.path.exists(BCH_T2W_dir):
         os.makedirs(BCH_T2W_dir)
     if not os.path.exists(BCH_T2W_all_dir):
@@ -125,8 +131,9 @@ def BCH_T2W(proj_dir, save_t2w):
 if __name__ == '__main__':
     
     proj_dir = '/mnt/kannlab_rfa/Zezhong/pLGG/data'
+    save_t2w = 'one_t2w'
 
-    BCH_T2W(proj_dir=proj_dir, save_t2w='one_t2w')
+    BCH_T2W(proj_dir, save_t2w)
 
 
 

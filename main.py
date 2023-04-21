@@ -1,44 +1,37 @@
 import os
 import numpy as np
-import pandas as pd
-import seaborn as sn
-import glob
-from time import gmtime, strftime
-from datetime import datetime
-import timeit
-import argparse
 import random
 import tensorflow as tf
 from data_generator import train_generator
 from data_generator import val_generator
-from generate_model import generate_model
+from get_model import get_model
 from transfer_model import transfer_model
 from train import train
 from test import test
 from opts import parse_opts
-from statistics.get_stats_plots import get_stats_plots
-
+from get_stats_plots import get_stats_plots
 
 
 def main(opt):
 
+    physical_devices = tf.config.experimental.list_physical_devices('GPU')
+    # physical_devices = tf.config.experimental.list_physical_devices('CPU')
+    print('physical_devices-------------', len(physical_devices))
+    #tf.config.experimental.set_memory_growth(physical_devices[3], True)
+    os.environ['CUDA_VISIBLE_DEVICES'] = '3'
     random.seed(opt.manual_seed)
     np.random.seed(opt.manual_seed)
     tf.random.set_seed(opt.manual_seed)
 
-    if opt.root_dir is not None:
-        opt.out_dir = os.path.join(opt.root_dir, opt.out)
-        opt.model_dir = os.path.join(opt.root_dir, opt.model)
-        opt.pro_data_dir = os.path.join(opt.root_dir, opt.pro_data)
-        opt.log_dir = os.path.join(opt.root_dir, opt.log)
-        if not os.path.exists(opt.out_dir):
-            os.makedirs(opt.out_dir)
-        if not os.path.exists(opt.model_dir):
-            os.makedirs(opt.model_dir)
-        if not os.path.exists(opt.pro_data_dir):
-            os.makefirs(opt.pro_data_dir)
-        if not os.path.exists(opt.log_dir):
-            os.makedirs(opt.log_dir)
+    if opt.proj_dir is not None:
+        out_dir = opt.proj_dir + '/output/' + opt.cls_task + '/' + opt.cnn_model
+        log_dir = opt.proj_dir + '/log/' + opt.cls_task + '/' + opt.cnn_model
+        tumor_cls_dir = opt.proj_dir + '/tumor_cls' 
+        braf_cls_dir = opt.proj_dir + '/braf_cls'
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
     else:
         print('get correct root dir to start.')
 
@@ -46,21 +39,23 @@ def main(opt):
     if opt.load_data:
         # data generator
         train_gen = train_generator(
-            task=opt.task,
-            pro_data_dir=opt.pro_data_dir,
+            cls_task=opt.cls_task,
+            tumor_cls_dir=tumor_cls_dir,
+            braf_cls_dir=braf_cls_dir,
             batch_size=opt.batch_size,
             channel=opt.channel)
         x_val, y_val, val_gen = val_generator(
-            task=opt.task,
-            pro_data_dir=opt.pro_data_dir,
+            cls_task=opt.cls_task,
+            tumor_cls_dir=tumor_cls_dir,
+            braf_cls_dir=braf_cls_dir,
             batch_size=opt.batch_size,
             channel=opt.channel)
+        print('train and val dataloader sucessful!')
 
     # get CNN model
     #cnns = ['ResNet50', 'EfficientNetB4', 'MobileNet', 
     #        'DenseNet121', 'IncepttionV3', 'VGG16']
-    cnns = ['simple_cnn']
-    for opt.cnn_model in cnns:
+    if opt.load_model:
         if opt.transfer_learning:
             my_model = transfer_model(
                 cnn_model=opt.cnn_model,
@@ -72,61 +67,52 @@ def main(opt):
                 saved_model=opt.saved_model,
                 tune_step=opt.tune_step)
         else:
-            my_model = generate_model(
+            my_model = get_model(
                 cnn_model=opt.cnn_model,
                 input_shape=opt.input_shape,
                 activation=opt.activation)
-
-        # train model
-        if opt.train:
-            final_model = train(
-                root_dir=opt.root_dir,
-                out_dir=opt.out_dir,
-                log_dir=opt.log_dir,
-                model_dir=opt.model_dir,
-                model=my_model,
-                cnn_model=opt.cnn_model,
-                train_gen=train_gen,
-                val_gen=val_gen,
-                x_val=x_val,
-                y_val=y_val,
-                batch_size=opt.batch_size,
-                epoch=opt.epoch,
-                loss_function=opt.loss_function,
-                lr=opt.lr,
-                task=opt.task,
-                freeze_layer=opt.freeze_layer,
-                trained_weights=opt.trained_weights)
-            print('training complete!')
+            # train model
+            if opt.train:
+                train(
+                    log_dir=log_dir,
+                    model=my_model,
+                    cnn_model=opt.cnn_model,
+                    train_gen=train_gen,
+                    val_gen=val_gen,
+                    x_va=x_val,
+                    y_va=y_val,
+                    batch_size=opt.batch_size,
+                    epoch=opt.epoch,
+                    loss_function=opt.loss_function,
+                    lr=opt.lr,
+                    cls_task=opt.cls_task)
+                print('training complete!')
 
     # test model
     if opt.test:
-        loss, acc = test(
-            task=opt.task,
+        test(
+            proj_dir=opt.proj_dir,
+            cls_task=opt.cls_task,
             model=my_model,
+            cnn_model=opt.cnn_model,
             run_type=opt.run_type, 
             channel=opt.channel,
-            model_dir=opt.model_dir, 
-            pro_data_dir=opt.pro_data_dir, 
             saved_model=opt.saved_model,
             lr=opt.lr,
             loss_function=opt.loss_function,
             threshold=opt.thr_img, 
             activation=opt.activation,
-            _load_model=opt._load_model)
+            load_model_type=opt.load_model_type)
         print('testing complete!')
 
     # get stats and plots
     if opt.stats_plots:
         get_stats_plots(
-            task=opt.task,
+            cls_task=opt.cls_task,
+            cnn_model=opt.cnn_model,
             channel=opt.channel,
-            pro_data_dir=opt.pro_data_dir,
-            root_dir=opt.root_dir,
+            proj_dir=opt.proj_dir,
             run_type=opt.run_type,
-            run_model=opt.cnn_model,
-            loss=None,
-            acc=None,
             saved_model=opt.cnn_model,
             epoch=opt.epoch,
             batch_size=opt.batch_size,

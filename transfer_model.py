@@ -13,24 +13,19 @@ from tensorflow.keras.applications import (
 from models.simple_cnn import simple_cnn
 
 
-
 def transfer_model(cnn_model, input_shape, activation, freeze_layer, model_dir, trained_weights,
                    saved_model, tune_step='pre_train', lock_base_model=False):
-
     """
     EfficientNet
-
     Args:
       cnn_model {str} -- name of resnets with different layers, i.e. 'ResNet101'.
       weights {str} -- model weights from imagenet
       input_shape {tuple} -- folder path to save model
       freeze_layer {int} -- number of layers to freeze
       activation {str} -- activation function in last layer
-    
     Returns:
         cnn model
     """
-       
     if cnn_model == 'simple_cnn':
         model = simple_cnn(input_shape=input_shape, activation=activation)
         if freeze_layer != None:

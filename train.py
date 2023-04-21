@@ -1,28 +1,18 @@
 import os
 import numpy as np
 import pandas as pd
-import seaborn as sn
-import glob
-from datetime import datetime
-from time import localtime, strftime
 import tensorflow as tf
 from tensorflow.keras.models import Model, load_model
-from callback import callback
+from my_callback import my_callback
+from logger import tr_logger
 from utils.plot_train_curve import plot_train_curve
 from tensorflow.keras.optimizers import Adam
-from statistics.write_txt import write_txt
-from tensorflow.keras.callbacks import (
-    EarlyStopping, LearningRateScheduler, ModelCheckpoint, TensorBoard)
+from tensorflow.keras.callbacks import EarlyStopping, LearningRateScheduler, ModelCheckpoint, TensorBoard
 
 
-
-def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen, 
-          val_gen, x_val, y_val, batch_size, epoch, loss_function, lr, task, 
-          freeze_layer, trained_weights): 
-
+def train(log_dir, model, cnn_model, train_gen, val_gen, x_va, y_va, batch_size, epoch, loss_function, lr, cls_task): 
     """
     train model
-
     Args:
         model {cnn model} -- cnn model;
         run_model {str} -- cnn model name;
@@ -36,38 +26,15 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
         opt {str or function} -- optimized function: 'adam';
         loss_func {str or function} -- loss function: 'binary_crossentropy';
         lr {float} -- learning rate;
-
     Returns:
         training accuracy, loss, model
-    
     """
-    
+        ## save validation results to txt file 
 
-    ## call back functions
-    check_point = tf.keras.callbacks.ModelCheckpoint(
-        filepath=os.path.join(model_dir, task + '_' + cnn_model + '_{epoch:02d}_{val_auc:.2f}.h5'),
-        monitor='val_auc',  
-        save_best_only=True,
-        save_weights_only=True,
-        mode='max')  # determine better models according to "max" AUC.
-    early_stopping = EarlyStopping(
-        monitor='val_auc',
-        min_delta=0,
-        patience=100,
-        verbose=0,
-        mode='auto',
-        baseline=None,
-        restore_best_weights=False)
-    tensor_board = TensorBoard(
-        log_dir=log_dir,
-        histogram_freq=0,
-        write_graph=True,
-        write_images=False,
-        update_freq='epoch',
-        profile_batch=2,
-        embeddings_freq=0,
-        embeddings_metadata=None)
-    my_callbacks = [check_point, early_stopping, tensor_board]
+    save_logger = True
+    if save_logger:
+        print('logging traininig process...')
+        tr_logger(log_dir, cls_task, cnn_model, epoch, batch_size, lr, y_va)
     
     # model compile
     auc = tf.keras.metrics.AUC()
@@ -76,17 +43,27 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
         loss=loss_function,
         metrics=[auc])
      
+    ## call back functions
+    #check_point = tf.keras.callbacks.ModelCheckpoint(filepath=model_dir + '_{epoch:02d}_{val_auc:.2f}.h5',
+     #   monitor='va_auc', save_best_only=True, save_weights_only=True, mode='max')  
+    #early_stopping = EarlyStopping(monitor='va_auc', patience=100)
+    tensor_board = TensorBoard(log_dir=log_dir, histogram_freq=0, write_graph=True, write_images=False, update_freq='epoch')
+    callback = my_callback(model, log_dir, x_va, y_va)
+    my_callbacks = [callback]
+    #my_callbacks = [check_point, early_stopping, tensor_board]
+
     # fit models
-    if task == 'BRAF_status':
+    if cls_task == 'BRAF_status':
         class_weight = {0: 3, 1: 1}
-    elif task == 'BRAF_fusion':
+    elif cls_task == 'BRAF_fusion':
         class_weight = {0: 2, 1: 1}
-    elif task == 'tumor':
+    elif cls_task == 'tumor':
         class_weight = {0: 1, 1: 6}
-    elif task == 'PFS_3yr':
+    elif cls_task == 'PFS_3yr':
         class_weight = {0: 5, 1: 3}
-    elif task == 'PFS_2yr':
+    elif cls_task == 'PFS_2yr':
         class_weight = {0: 1, 1: 1}
+
     history = model.fit(
         train_gen,
         steps_per_epoch=train_gen.n//batch_size,
@@ -103,39 +80,6 @@ def train(root_dir, out_dir, log_dir, model_dir, model, cnn_model, train_gen,
         sample_weight=None,
         initial_epoch=0)
     
-    ## valudation acc and loss
-    score = model.evaluate(x_val, y_val)
-    loss = np.around(score[0], 3)
-    acc = np.around(score[1], 3)
-    print('val loss:', loss)
-    print('val acc:', acc)
-
-    ## save final model
-    #saved_model = str(cnn_model) + '_final.h5'
-    saved_model = str(cnn_model) + '_final_model'
-    model.save(os.path.join(model_dir, saved_model))
-    #model.save(os.path.join(model_dir, saved_model), save_format='h5',)
-    
-    ## save validation results to txt file 
-    _write_txt = False
-    if _write_txt:
-        write_txt(
-            run_type='train',
-            root_dir=root_dir,
-            loss=1,
-            acc=1,
-            cms=None,
-            cm_norms=None,
-            reports=None,
-            prc_aucs=None,
-            roc_stats=None,
-            run_model=cnn_model,
-            saved_model=saved_model,
-            epoch=epoch,
-            batch_size=batch_size,
-            lr=lr)
-
-    return model 
 
 
     

@@ -1,0 +1,33 @@
+import os
+import numpy as np
+import pandas as pd
+from datetime import datetime
+from time import localtime, strftime
+
+
+def write_txt(output_dir, val_loss, val_acc, cm, cm_norm, prc_auc, stat1,           
+	          stat2, stat3, stat4,stat5, run_model, epoch, batch_size, dropout_rate, 
+	          batch_momentum, learning_rate):
+    
+    write_path = os.path.join(output_dir, 'train_logs.text')
+    with open(write_path, 'a') as f:
+        f.write('\n--------------------------------------')
+        f.write('\ncreated time: %s' % strftime('%Y-%m-%d-%H-%M-%S', localtime()))
+        f.write('\nval accuracy: %s' % val_acc)
+        f.write('\nval loss: %s' % val_loss)
+        f.write('\nconfusion matrix:\n %s' % cm)
+        f.write('\nconfusion matrix:\n %s' % cm_norm)
+        f.write('\nprc_auc: %s' % prc_auc)
+        f.write('\nimage roc:\n %s' % stat1)
+        f.write('\nroc patient mean prob:\n %s' % stat2)
+        f.write('\nroc patient median prob:\n %s' % stat3)
+        f.write('\nroc patient pos rate:\n %s' % stat4)
+        f.write('\nroc patient threshold:\n %s' % stat5)
+        f.write('\nmodel: %s' % run_model)
+        f.write('\nepoch: %s' % epoch)
+        f.write('\nlearning rate: %s' % learning_rate)
+        f.write('\nbatch size: %s' % batch_size)
+        f.write('\ndropout rate: %s' % dropout_rate)
+        f.write('\nbatch momentum: %s' % batch_momentum)
+        f.write('\n')
+        f.close()

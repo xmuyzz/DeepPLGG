@@ -1,0 +1,108 @@
+#----------------------------------------------------------------------
+# Deep learning for classification for contrast CT;
+# Transfer learning using Google Inception V3;
+#-----------------------------------------------------------------------------------------
+import os
+import numpy as np
+import pandas as pd
+import seaborn as sn
+import matplotlib.pyplot as plt
+import glob
+from time import gmtime, strftime
+from datetime import datetime
+import timeit
+from sklearn.model_selection import train_test_split, GroupShuffleSplit
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import roc_curve, auc, precision_recall_curve
+
+
+# ----------------------------------------------------------------------------------
+# plot ROI
+# ----------------------------------------------------------------------------------
+def roc_patient_thr(run_type, output_dir, threshold, roc_fn, color):
+    
+    ### determine if this is train or test
+    if run_type == 'train':
+        df_sum = pd.read_pickle(os.path.join(output_dir, 'df_val_pred.p'))
+    if run_type == 'test':
+        df_sum = pd.read_pickle(os.path.join(output_dir, 'df_test_pred.p'))
+    
+    ### use patient-average scores and labels to calcualte ROC
+    df_mean = df_sum.groupby(['ID']).mean()
+    y_true = df_mean['label'].to_numpy()
+    ### pos_rate = n_predicted_class1 / n_img
+    pos_rates = df_mean['y_pred_class'].to_list()
+    ### using threshold to determine predicted class for patient
+    y_pred = []
+    for pos_rate in pos_rates:
+        if pos_rate > threshold:
+            pred = 1
+        else:
+            pred = 0
+        y_pred.append(pred)
+    y_pred = np.asarray(y_pred)
+
+    ### using confusion matrix to calculate AUC
+    cm = confusion_matrix(y_true, y_pred)
+    cm_norm = cm.astype('float64') / cm.sum(axis=1)[:, np.newaxis]
+    cm_norm = np.around(cm_norm, 2)
+    fp = cm[0][1]
+    fn = cm[1][0]
+    tp = cm[1][1]
+    tn = cm[0][0]
+    acc = (tp + tn)/(tp + fp + fn + tn)
+    tpr = tp/(tp + fn)
+    tnr = tn/(tn + fp)
+    tpr = np.around(tpr, 3)
+    tnr = np.around(tnr, 3)
+    auc5 = (tpr + tnr)/2
+    auc5 = np.around(auc5, 3)
+
+    ### plot roc
+    fig = plt.figure()
+    ax  = fig.add_subplot(1, 1, 1)
+    ax.set_aspect('equal')
+    x_1 = [0, tnr]
+    y_1 = [0, tpr]
+    x_2 = [tnr, 1]
+    y_2 = [tpr, 1]
+    plt.plot(x_1, y_1, color=color, linewidth=3, label='AUC %0.3f' % auc5)
+    plt.plot(x_1, y_1, color=color, linewidth=3)
+    plt.xlim([-0.03, 1])
+    plt.ylim([0, 1.03])
+    ax.axhline(y=0, color='k', linewidth=4)
+    ax.axhline(y=1.03, color='k', linewidth=4)
+    ax.axvline(x=-0.03, color='k', linewidth=4)
+    ax.axvline(x=1, color='k', linewidth=4) 
+    plt.xticks([0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=14, fontweight='bold')
+    plt.yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0], fontsize=14, fontweight='bold')
+    #plt.xlabel('False Positive Rate', fontweight='bold', fontsize=15)
+    #plt.ylabel('True Positive Rate', fontweight='bold', fontsize=15)
+    plt.legend(loc='lower right', prop={'size': 14, 'weight': 'bold'}) 
+    plt.grid(True)
+    roc_fn = 'roc_patient_thr' + '.png'             
+    plt.savefig(os.path.join(output_dir, roc_fn), format='png', dpi=600)
+    #plt.show()
+    plt.close()
+    
+    ### save results into dataframe
+    stat5 = pd.DataFrame(
+        [auc5, tpr, tnr],
+        columns=['Value'],
+        index=['AUC', 'TPR', 'TNR']
+        )
+    
+    print('\nroc patient thr:')
+    print(auc5)
+    print(stat5)
+
+    return auc5, stat5
+
+
+
+
+
+    
+
+   
